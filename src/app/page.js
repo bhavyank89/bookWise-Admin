@@ -1,10 +1,27 @@
 "use client";
 
-import Dashboard from "@/components/Dashboard";
-import Navbar from "@/components/Navbar";
-import AllUsers from "@/components/AllUsers";
-import React, { useState } from "react";
+import React, { useState, Suspense, lazy, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+
+import Navbar from "@/components/Navbar";
+import Loader from "@/components/Loader"; // ⬅️ Import the spinner
+
+const Dashboard = lazy(() => import("@/components/Dashboard"));
+const AllUsers = lazy(() => import("@/components/AllUsers"));
+const AllBooks = lazy(() => import("@/components/AllBooks"));
+
+const AnimatedPage = ({ children }) => (
+  <motion.div
+    className="w-full"
+    initial={{ opacity: 0, y: 15 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -10 }}
+    transition={{ duration: 0.3 }}
+  >
+    {children}
+  </motion.div>
+);
 
 function MainApp() {
   const [isLogin, setIsLogin] = useState(true);
@@ -14,39 +31,36 @@ function MainApp() {
 
   const closeSidebar = () => setShowSidebar(false);
 
+  useEffect(() => {
+    const titles = {
+      "/": "Dashboard",
+      "/all-users": "All Users",
+      "/all-books": "All Books",
+    };
+    document.title = titles[location.pathname] || "Library App";
+  }, [location.pathname]);
+
   return (
     <section className="bg-[#F8F8FF] min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
-      {/* Hamburger Icon (Mobile) */}
+      {/* Hamburger Icon */}
       <button
         className="md:hidden fixed top-4 left-4 z-50 flex flex-col justify-between w-8 h-8 focus:outline-none"
         onClick={() => setShowSidebar(!showSidebar)}
       >
-        <span
-          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "rotate-45 translate-y-3" : ""
-            }`}
-        />
-        <span
-          className={`block h-1 w-full bg-black rounded transition-opacity duration-300 ${showSidebar ? "opacity-0" : "opacity-100"
-            }`}
-        />
-        <span
-          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "-rotate-45 -translate-y-3" : ""
-            }`}
-        />
+        <span className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "rotate-45 translate-y-3" : ""}`} />
+        <span className={`block h-1 w-full bg-black rounded transition-opacity duration-300 ${showSidebar ? "opacity-0" : "opacity-100"}`} />
+        <span className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "-rotate-45 -translate-y-3" : ""}`} />
       </button>
 
-      {/* Mobile Sidebar Backdrop */}
+      {/* Backdrop */}
       {showSidebar && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40"
-          onClick={closeSidebar}
-        ></div>
+        <div className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40" onClick={closeSidebar} />
       )}
 
-      {/* Fixed Sidebar */}
+      {/* Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen w-4/5 sm:w-2/3 md:w-1/5 bg-white z-50 transform transition-transform duration-300 ease-in-out
-          ${showSidebar ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
+        className={`fixed top-0 left-0 h-screen w-4/5 sm:w-2/3 md:w-1/5 bg-white z-50 transform transition-transform duration-300 ease-in-out 
+        ${showSidebar ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:block`}
       >
         <Navbar
           setIsLogin={setIsLogin}
@@ -56,19 +70,24 @@ function MainApp() {
         />
       </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 w-full md:ml-[20%] mt-16 md:mt-0 overflow-y-auto max-h-screen p-4">
-        <Routes location={location} key={location.pathname}>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/all-users" element={<AllUsers />} />
-          {/* <Route path="/login" element={<Login setIsLogin={setIsLogin} />} /> */}
-          {/* <Route path="/signup" element={<Signup />} /> */}
-          {/* <Route path="/bookdetails/:id" element={<BookDetails />} /> */}
-          {/* <Route path="/search" element={<SearchPage />} /> */}
-          {/* <Route path="/profile" element={<Profile />} /> */}
-          {/* <Route path="/uploadBook" element={<UploadBook />} /> */}
-        </Routes>
-      </div>
+      {/* Main Content */}
+      <main className="flex-1 w-full md:ml-[20%] mt-16 md:mt-0 overflow-auto max-h-screen p-4">
+        <Suspense fallback={<Loader />}>
+          <AnimatePresence mode="wait">
+            <Routes location={location} key={location.pathname}>
+              <Route path="/" element={<AnimatedPage><Dashboard /></AnimatedPage>} />
+              <Route path="/all-users" element={<AnimatedPage><AllUsers /></AnimatedPage>} />
+              <Route path="/all-books" element={<AnimatedPage><AllBooks /></AnimatedPage>} />
+              {/* <Route path="/login" element={<Login setIsLogin={setIsLogin} />} /> */}
+              {/* <Route path="/signup" element={<Signup />} /> */}
+              {/* <Route path="/bookdetails/:id" element={<BookDetails />} /> */}
+              {/* <Route path="/search" element={<SearchPage />} /> */}
+              {/* <Route path="/profile" element={<Profile />} /> */}
+              {/* <Route path="/uploadBook" element={<UploadBook />} /> */}
+            </Routes>
+          </AnimatePresence>
+        </Suspense>
+      </main>
     </section>
   );
 }

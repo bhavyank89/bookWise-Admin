@@ -21,7 +21,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
         if (closeSidebar) closeSidebar();
     };
 
-    const isActive = (path) => location.pathname.startsWith(path);
+    const isActive = (path) => location.pathname === path;
 
     const handleLogout = () => {
         setIsLogin(false);
@@ -32,10 +32,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
     return (
         <section className="bg-gray-50 p-4 w-full flex flex-col gap-6 h-full shadow-lg">
             {/* Header */}
-            <div
-                onClick={() => handleNavigation("/dashboard")}
-                className="cursor-pointer pt-2"
-            >
+            <div onClick={() => handleNavigation("/dashboard")} className="cursor-pointer pt-2">
                 <h1 className="text-3xl text-[#25388C] font-bold flex items-center gap-2">
                     <BookOpen size={28} /> BookWise
                 </h1>
@@ -46,12 +43,9 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
             <nav>
                 <ul className="flex flex-col gap-2 text-gray-700">
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/") &&
-                            !isActive("/all-users") &&
-                            !isActive("/borrow-requests") &&
-                            !isActive("/account-requests")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
+                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/")
+                                ? "bg-[#25388C] text-white shadow-md"
+                                : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/")}
                     >
@@ -59,17 +53,17 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                     </li>
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-users")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
+                                ? "bg-[#25388C] text-white shadow-md"
+                                : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/all-users")}
                     >
                         <Users size={18} /> All Users
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-users")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
+                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-books")
+                                ? "bg-[#25388C] text-white shadow-md"
+                                : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/all-books")}
                     >
@@ -77,8 +71,8 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                     </li>
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/borrow-requests")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
+                                ? "bg-[#25388C] text-white shadow-md"
+                                : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/borrow-requests")}
                     >
@@ -86,8 +80,8 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                     </li>
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/account-requests")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
+                                ? "bg-[#25388C] text-white shadow-md"
+                                : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/account-requests")}
                     >
