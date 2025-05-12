@@ -2,6 +2,7 @@
 
 import Dashboard from "@/components/Dashboard";
 import Navbar from "@/components/Navbar";
+import AllUsers from "@/components/AllUsers";
 import React, { useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 
@@ -21,19 +22,16 @@ function MainApp() {
         onClick={() => setShowSidebar(!showSidebar)}
       >
         <span
-          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${
-            showSidebar ? "rotate-45 translate-y-3" : ""
-          }`}
+          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "rotate-45 translate-y-3" : ""
+            }`}
         />
         <span
-          className={`block h-1 w-full bg-black rounded transition-opacity duration-300 ${
-            showSidebar ? "opacity-0" : "opacity-100"
-          }`}
+          className={`block h-1 w-full bg-black rounded transition-opacity duration-300 ${showSidebar ? "opacity-0" : "opacity-100"
+            }`}
         />
         <span
-          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${
-            showSidebar ? "-rotate-45 -translate-y-3" : ""
-          }`}
+          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "-rotate-45 -translate-y-3" : ""
+            }`}
         />
       </button>
 
@@ -62,6 +60,7 @@ function MainApp() {
       <div className="flex-1 w-full md:ml-[20%] mt-16 md:mt-0 overflow-y-auto max-h-screen p-4">
         <Routes location={location} key={location.pathname}>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/all-users" element={<AllUsers />} />
           {/* <Route path="/login" element={<Login setIsLogin={setIsLogin} />} /> */}
           {/* <Route path="/signup" element={<Signup />} /> */}
           {/* <Route path="/bookdetails/:id" element={<BookDetails />} /> */}
