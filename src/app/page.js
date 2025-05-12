@@ -15,7 +15,7 @@ function MainApp() {
 
   return (
     <section className="bg-[#F8F8FF] min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
-      {/* Animated Hamburger Icon (Mobile) */}
+      {/* Hamburger Icon (Mobile) */}
       <button
         className="md:hidden fixed top-4 left-4 z-50 flex flex-col justify-between w-8 h-8 focus:outline-none"
         onClick={() => setShowSidebar(!showSidebar)}
@@ -37,7 +37,7 @@ function MainApp() {
         />
       </button>
 
-      {/* Backdrop for Mobile Sidebar */}
+      {/* Mobile Sidebar Backdrop */}
       {showSidebar && (
         <div
           className="fixed inset-0 bg-black bg-opacity-30 backdrop-blur-sm z-40"
@@ -45,10 +45,10 @@ function MainApp() {
         ></div>
       )}
 
-      {/* Sidebar */}
+      {/* Fixed Sidebar */}
       <div
-        className={`fixed top-0 left-0 h-screen w-4/5 sm:w-2/3 md:relative md:w-1/5 bg-white z-50 transform transition-transform duration-300 ease-in-out
-          ${showSidebar ? "translate-x-0" : "-translate-x-full"} md:translate-x-0 md:block`}
+        className={`fixed top-0 left-0 h-screen w-4/5 sm:w-2/3 md:w-1/5 bg-white z-50 transform transition-transform duration-300 ease-in-out
+          ${showSidebar ? "translate-x-0" : "-translate-x-full"} md:translate-x-0`}
       >
         <Navbar
           setIsLogin={setIsLogin}
@@ -58,13 +58,12 @@ function MainApp() {
         />
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 w-full mt-16 md:mt-0">
+      {/* Main Content Area */}
+      <div className="flex-1 w-full md:ml-[20%] mt-16 md:mt-0 overflow-y-auto max-h-screen p-4">
         <Routes location={location} key={location.pathname}>
-          {/* <Route path="/" element={<App />} /> */}
+          <Route path="/" element={<Dashboard />} />
           {/* <Route path="/login" element={<Login setIsLogin={setIsLogin} />} /> */}
           {/* <Route path="/signup" element={<Signup />} /> */}
-          <Route path="/" element={<Dashboard />} />
           {/* <Route path="/bookdetails/:id" element={<BookDetails />} /> */}
           {/* <Route path="/search" element={<SearchPage />} /> */}
           {/* <Route path="/profile" element={<Profile />} /> */}
