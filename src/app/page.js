@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader"; // ⬅️ Import the spinner
 import BorrowRequests from "@/components/BorrowRequest";
+import AccountRequests from "@/components/AccountRequest";
 
 const Dashboard = lazy(() => import("@/components/Dashboard"));
 const AllUsers = lazy(() => import("@/components/AllUsers"));
@@ -80,12 +81,7 @@ function MainApp() {
               <Route path="/all-users" element={<AnimatedPage><AllUsers /></AnimatedPage>} />
               <Route path="/all-books" element={<AnimatedPage><AllBooks /></AnimatedPage>} />
               <Route path="/borrow-requests" element={<AnimatedPage><BorrowRequests /></AnimatedPage>} />
-              {/* <Route path="/login" element={<Login setIsLogin={setIsLogin} />} /> */}
-              {/* <Route path="/signup" element={<Signup />} /> */}
-              {/* <Route path="/bookdetails/:id" element={<BookDetails />} /> */}
-              {/* <Route path="/search" element={<SearchPage />} /> */}
-              {/* <Route path="/profile" element={<Profile />} /> */}
-              {/* <Route path="/uploadBook" element={<UploadBook />} /> */}
+              <Route path="/account-requests" element={<AnimatedPage><AccountRequests /></AnimatedPage>} />
             </Routes>
           </AnimatePresence>
         </Suspense>
