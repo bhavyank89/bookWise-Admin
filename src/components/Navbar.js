@@ -9,6 +9,7 @@ import {
     UserRound,
     LogOut,
     Book,
+    Pen,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -44,8 +45,8 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                 <ul className="flex flex-col gap-2 text-gray-700">
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/")
-                                ? "bg-[#25388C] text-white shadow-md"
-                                : "hover:bg-[#25388C] hover:text-white"
+                            ? "bg-[#25388C] text-white shadow-md"
+                            : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/")}
                     >
@@ -53,8 +54,8 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                     </li>
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-users")
-                                ? "bg-[#25388C] text-white shadow-md"
-                                : "hover:bg-[#25388C] hover:text-white"
+                            ? "bg-[#25388C] text-white shadow-md"
+                            : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/all-users")}
                     >
@@ -62,8 +63,8 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                     </li>
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-books")
-                                ? "bg-[#25388C] text-white shadow-md"
-                                : "hover:bg-[#25388C] hover:text-white"
+                            ? "bg-[#25388C] text-white shadow-md"
+                            : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/all-books")}
                     >
@@ -71,8 +72,8 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                     </li>
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/borrow-requests")
-                                ? "bg-[#25388C] text-white shadow-md"
-                                : "hover:bg-[#25388C] hover:text-white"
+                            ? "bg-[#25388C] text-white shadow-md"
+                            : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/borrow-requests")}
                     >
@@ -80,12 +81,21 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                     </li>
                     <li
                         className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/account-requests")
-                                ? "bg-[#25388C] text-white shadow-md"
-                                : "hover:bg-[#25388C] hover:text-white"
+                            ? "bg-[#25388C] text-white shadow-md"
+                            : "hover:bg-[#25388C] hover:text-white"
                             }`}
                         onClick={() => handleNavigation("/account-requests")}
                     >
                         <UserRound size={18} /> Account Requests
+                    </li>
+                    <li
+                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/createBook")
+                            ? "bg-[#25388C] text-white shadow-md"
+                            : "hover:bg-[#25388C] hover:text-white"
+                            }`}
+                        onClick={() => handleNavigation("/createBook")}
+                    >
+                        <Pen size={18} /> Create Book
                     </li>
                 </ul>
             </nav>

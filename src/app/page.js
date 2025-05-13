@@ -12,6 +12,7 @@ import AccountRequests from "@/components/AccountRequest";
 const Dashboard = lazy(() => import("@/components/Dashboard"));
 const AllUsers = lazy(() => import("@/components/AllUsers"));
 const AllBooks = lazy(() => import("@/components/AllBooks"));
+const CreateBook = lazy(() => import("@/components/CreateBook"));
 
 const AnimatedPage = ({ children }) => (
   <motion.div
@@ -82,6 +83,7 @@ function MainApp() {
               <Route path="/all-books" element={<AnimatedPage><AllBooks /></AnimatedPage>} />
               <Route path="/borrow-requests" element={<AnimatedPage><BorrowRequests /></AnimatedPage>} />
               <Route path="/account-requests" element={<AnimatedPage><AccountRequests /></AnimatedPage>} />
+              <Route path="/createBook" element={<AnimatedPage><CreateBook /></AnimatedPage>} />
             </Routes>
           </AnimatePresence>
         </Suspense>
