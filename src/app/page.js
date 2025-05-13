@@ -8,6 +8,7 @@ import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader"; // ⬅️ Import the spinner
 import BorrowRequests from "@/components/BorrowRequest";
 import AccountRequests from "@/components/AccountRequest";
+import UpdateBook from "@/components/UpdateBook";
 
 const Dashboard = lazy(() => import("@/components/Dashboard"));
 const AllUsers = lazy(() => import("@/components/AllUsers"));
@@ -84,6 +85,7 @@ function MainApp() {
               <Route path="/borrow-requests" element={<AnimatedPage><BorrowRequests /></AnimatedPage>} />
               <Route path="/account-requests" element={<AnimatedPage><AccountRequests /></AnimatedPage>} />
               <Route path="/createBook" element={<AnimatedPage><CreateBook /></AnimatedPage>} />
+              <Route path="/updateBook" element={<AnimatedPage><UpdateBook /></AnimatedPage>} />
             </Routes>
           </AnimatePresence>
         </Suspense>
