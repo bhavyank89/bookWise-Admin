@@ -3,6 +3,7 @@
 import React, { useState, Suspense, lazy, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useLocation } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import * as Tooltip from "@radix-ui/react-tooltip";
 
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader"; // ⬅️ Import the spinner
@@ -98,8 +99,10 @@ function MainApp() {
 
 export default function Home() {
   return (
-    <Router>
-      <MainApp />
-    </Router>
+    <Tooltip.Provider>
+      <Router>
+        <MainApp />
+      </Router>
+    </Tooltip.Provider>
   );
 }
