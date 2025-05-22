@@ -76,8 +76,8 @@ export default function AllBooks() {
   };
 
   const renderBookImageOrFallback = (book) => {
-    if (book?.image) {
-      return <img src={book.image} alt="cover" className="w-10 h-14 object-cover rounded" />;
+    if (book?.thumbnailCloudinary?.secure_url) {
+      return <img src={book?.thumbnailCloudinary?.secure_url} alt="cover" className="w-10 h-14 object-cover rounded" />;
     } else {
       const fallbackText = (book?.title || "NA").substring(0, 2).toUpperCase();
       return (
@@ -222,7 +222,7 @@ export default function AllBooks() {
                 <tbody>
                   {currentBooks.map((book) => (
                     <tr key={book._id} className="hover:bg-gray-50 transition-all duration-300">
-                      <td className="py-2 pl-2 flex items-center gap-2">
+                      <td className="py-2 pl-2 flex items-center gap-2" onClick={() => { console.log(book) }}>
                         {renderBookImageOrFallback(book)}
                         <span>{book.title}</span>
                       </td>
@@ -231,14 +231,14 @@ export default function AllBooks() {
                       <td>{formatDate(book.updatedAt)}</td>
                       <td className="flex items-center gap-4">
                         <button
-                          className="text-blue-700 hover:opacity-80 transition-opacity duration-200"
+                          className="text-blue-700 hover:opacity-80 transition-opacity duration-200 hover:cursor-pointer"
                           onClick={() => navigate(`/update/${book._id}`)}
                           aria-label={`Edit ${book.title}`}
                         >
                           <Pencil size={16} />
                         </button>
                         <button
-                          className="text-red-700 hover:opacity-80 transition-opacity duration-200"
+                          className="text-red-700 hover:opacity-80 transition-opacity duration-200 hover:cursor-pointer"
                           onClick={() => handleDeleteClick(book)}
                           aria-label={`Delete ${book.title}`}
                         >
@@ -280,13 +280,13 @@ export default function AllBooks() {
                     setShowModal(false);
                     setBookToDelete(null);
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
+                  className="px-4 py-2 bg-gray-300 rounded hover:cursor-pointer hover:bg-gray-400 transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmDeleteBook}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition hover:cursor-pointer"
                 >
                   Delete
                 </button>
@@ -313,7 +313,7 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
         disabled={currentPage === 1}
         className={`
           px-5 py-2 rounded-lg border border-gray-300
-          focus:outline-none focus:ring-2 focus:ring-blue-400
+          focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer
           ${currentPage === 1 ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" : "bg-white text-gray-700"}
         `}
         aria-label="Previous page"
@@ -341,7 +341,7 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
         disabled={currentPage === totalPages}
         className={`
           px-5 py-2 rounded-lg border border-gray-300
-          focus:outline-none focus:ring-2 focus:ring-blue-400
+          focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer
           ${currentPage === totalPages ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" : "bg-white text-gray-700"}
         `}
         aria-label="Next page"
