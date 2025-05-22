@@ -1,9 +1,9 @@
-import { useState, useEffect, Fragment } from "react";
+import { useState, useEffect } from "react";
 import { Pencil, Trash2, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { Dialog, Transition } from "@headlessui/react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { motion } from "framer-motion";
 
 export default function AllBooks() {
   const [search, setSearch] = useState("");
@@ -222,38 +222,28 @@ export default function AllBooks() {
                 <tbody>
                   {currentBooks.map((book) => (
                     <tr key={book._id} className="hover:bg-gray-50 transition-all duration-300">
-                      <td className="py-2 pl-2 flex items-center gap-2 truncate">
+                      <td className="py-2 pl-2 flex items-center gap-2">
                         {renderBookImageOrFallback(book)}
-                        <a
-                          href={book.pdfCloudinary || "#"}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline truncate max-w-[300px] block"
-                          title={book.title}
-                        >
-                          {book.title || "Untitled"}
-                        </a>
+                        <span>{book.title}</span>
                       </td>
-                      <td className="truncate" title={book.author || "Unknown Author"}>
-                        {book.author || "Unknown Author"}
-                      </td>
-                      <td className="truncate" title={book.genre || "Unspecified Genre"}>
-                        {book.genre || "Unspecified Genre"}
-                      </td>
+                      <td>{book.author}</td>
+                      <td>{book.genre}</td>
                       <td>{formatDate(book.updatedAt)}</td>
-                      <td>
-                        <div className="flex gap-3">
-                          <Pencil
-                            size={16}
-                            className="text-blue-600 cursor-pointer hover:scale-125 transition-transform"
-                            onClick={() => navigate(`/update/${book._id}`)}
-                          />
-                          <Trash2
-                            size={16}
-                            className="text-red-600 cursor-pointer hover:scale-125 transition-transform"
-                            onClick={() => handleDeleteClick(book)}
-                          />
-                        </div>
+                      <td className="flex items-center gap-4">
+                        <button
+                          className="text-blue-700 hover:opacity-80 transition-opacity duration-200"
+                          onClick={() => navigate(`/update/${book._id}`)}
+                          aria-label={`Edit ${book.title}`}
+                        >
+                          <Pencil size={16} />
+                        </button>
+                        <button
+                          className="text-red-700 hover:opacity-80 transition-opacity duration-200"
+                          onClick={() => handleDeleteClick(book)}
+                          aria-label={`Delete ${book.title}`}
+                        >
+                          <Trash2 size={16} />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -262,150 +252,145 @@ export default function AllBooks() {
             </div>
           )}
 
-          {/* Pagination */}
-          {!loading && currentBooks.length > 0 && (
-            <div className="flex justify-center mt-4 gap-2 flex-wrap">
-              <button
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                disabled={currentPage === 1}
-                className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-40 hover:cursor-pointer transition-transform duration-200"
-              >
-                Previous
-              </button>
-              {[...Array(totalPages).keys()].map((pageIndex) => (
-                <button
-                  key={pageIndex}
-                  onClick={() => setCurrentPage(pageIndex + 1)}
-                  className={`px-3 py-1 rounded hover:cursor-pointer transition-transform duration-200 ${currentPage === pageIndex + 1
-                    ? "bg-blue-600 text-white"
-                    : "bg-gray-200 text-gray-700 hover:bg-gray-300"
-                    }`}
-                >
-                  {pageIndex + 1}
-                </button>
-              ))}
-              <button
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="px-3 py-1 bg-blue-600 text-white rounded disabled:opacity-40 hover:cursor-pointer transition-transform duration-200"
-              >
-                Next
-              </button>
-            </div>
-          )}
-
-          {/* Delete confirmation modal */}
-          <Transition appear show={showModal} as={Fragment}>
-            <Dialog
-              as="div"
-              className="fixed inset-0 z-10 overflow-y-auto"
-              onClose={() => setShowModal(false)}
-            >
-              <div className="min-h-screen px-4 text-center">
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0"
-                  enterTo="opacity-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100"
-                  leaveTo="opacity-0"
-                >
-                  <Dialog.Overlay className="fixed inset-0 bg-black opacity-30" />
-                </Transition.Child>
-
-                {/* Trick the browser into centering the modal contents. */}
-                <span className="inline-block h-screen align-middle" aria-hidden="true">
-                  &#8203;
-                </span>
-
-                <Transition.Child
-                  as={Fragment}
-                  enter="ease-out duration-300"
-                  enterFrom="opacity-0 scale-95"
-                  enterTo="opacity-100 scale-100"
-                  leave="ease-in duration-200"
-                  leaveFrom="opacity-100 scale-100"
-                  leaveTo="opacity-0 scale-95"
-                >
-                  <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-lg">
-                    <Dialog.Title
-                      as="h3"
-                      className="text-lg font-medium leading-6 text-gray-900 "
-                    >
-                      Confirm Delete
-                    </Dialog.Title>
-                    <div className="mt-2">
-                      <p>
-                        Are you sure you want to delete the book{" "}
-                        <strong>{bookToDelete?.title || "this book"}</strong>?
-                      </p>
-                    </div>
-
-                    <div className="mt-4 flex justify-end gap-3">
-                      <button
-                        type="button"
-                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded hover:bg-gray-300 hover:cursor-pointer transition-transform duration-200"
-                        onClick={() => setShowModal(false)}
-                      >
-                        Cancel
-                      </button>
-                      <button
-                        type="button"
-                        className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-red-600 rounded hover:bg-red-700 hover:cursor-pointer transition-transform duration-200"
-                        onClick={confirmDeleteBook}
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  </div>
-                </Transition.Child>
-              </div>
-            </Dialog>
-          </Transition>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            setCurrentPage={setCurrentPage}
+          />
         </div>
+
+        {/* Custom Delete Confirmation Modal */}
+        {showModal && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="modal-title"
+          >
+            <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
+              <h3 id="modal-title" className="text-lg font-semibold mb-4">
+                Confirm Deletion
+              </h3>
+              <p className="mb-6">
+                Are you sure you want to delete the book <strong>{bookToDelete?.title}</strong>?
+              </p>
+              <div className="flex justify-end gap-4">
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    setBookToDelete(null);
+                  }}
+                  className="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={confirmDeleteBook}
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
 }
 
-// Loading skeleton placeholder component
-function SkeletonTable() {
+
+function Pagination({ currentPage, totalPages, setCurrentPage }) {
   return (
-    <div role="status" className="animate-pulse p-4">
-      <div className="h-6 bg-gray-300 rounded w-1/4 mb-2" />
-      <div className="space-y-2">
-        {[...Array(3)].map((_, i) => (
-          <div key={i} className="h-10 bg-gray-200 rounded" />
-        ))}
-      </div>
-    </div>
+    <nav
+      className="mt-6 flex justify-center gap-6 select-none"
+      aria-label="Pagination Navigation"
+    >
+      <motion.button
+        whileHover={currentPage !== 1 ? { scale: 1.1, backgroundColor: "#2563EB", color: "#fff", boxShadow: "0 4px 10px rgba(37, 99, 235, 0.5)" } : {}}
+        whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
+        onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+        disabled={currentPage === 1}
+        className={`
+          px-5 py-2 rounded-lg border border-gray-300
+          focus:outline-none focus:ring-2 focus:ring-blue-400
+          ${currentPage === 1 ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" : "bg-white text-gray-700"}
+        `}
+        aria-label="Previous page"
+      >
+        &lt; Prev
+      </motion.button>
+
+      <motion.span
+        layout
+        initial={{ scale: 1 }}
+        animate={{ scale: 1.05 }}
+        transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        className="
+          px-7 py-2 rounded-lg border border-blue-600 bg-blue-50
+          font-semibold text-blue-700 select-none shadow-inner
+        "
+      >
+        {currentPage} / {totalPages}
+      </motion.span>
+
+      <motion.button
+        whileHover={currentPage !== totalPages ? { scale: 1.1, backgroundColor: "#2563EB", color: "#fff", boxShadow: "0 4px 10px rgba(37, 99, 235, 0.5)" } : {}}
+        whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
+        onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className={`
+          px-5 py-2 rounded-lg border border-gray-300
+          focus:outline-none focus:ring-2 focus:ring-blue-400
+          ${currentPage === totalPages ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" : "bg-white text-gray-700"}
+        `}
+        aria-label="Next page"
+      >
+        Next &gt;
+      </motion.button>
+    </nav>
   );
 }
 
-// No results fallback with fade-in animation
+
+function SkeletonTable() {
+  // Simple skeleton placeholders for loading state
+  return (
+    <table className="w-full text-sm text-left min-w-[700px]">
+      <thead>
+        <tr className="bg-gray-100">
+          {Array(5)
+            .fill(0)
+            .map((_, i) => (
+              <th key={i} className="p-4">
+                <div className="h-4 bg-gray-300 rounded animate-pulse"></div>
+              </th>
+            ))}
+        </tr>
+      </thead>
+      <tbody>
+        {Array(5)
+          .fill(0)
+          .map((_, i) => (
+            <tr key={i} className="border-b border-gray-200">
+              {Array(5)
+                .fill(0)
+                .map((_, j) => (
+                  <td key={j} className="p-4">
+                    <div className="h-4 bg-gray-300 rounded animate-pulse"></div>
+                  </td>
+                ))}
+            </tr>
+          ))}
+      </tbody>
+    </table>
+  );
+}
+
 function NoResultsFallback({ searchTerm }) {
   return (
-    <div className="mt-6 p-6 text-center text-gray-500 text-lg animate-fade-in">
-      {searchTerm ? (
-        <>
-          No results found for <span className="font-semibold">{searchTerm}</span>.
-          <br />
-          Try adjusting your search or filters.
-        </>
-      ) : (
-        <>No books available.</>
-      )}
-
-      <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.5s ease-in forwards;
-        }
-      `}</style>
+    <div className="text-center py-10 text-gray-600 text-lg">
+      No results found for "<span className="font-semibold">{searchTerm}</span>"
     </div>
   );
 }
