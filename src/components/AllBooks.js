@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Pencil, Trash2, Plus } from "lucide-react";
+import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { motion } from "framer-motion";
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 
 export default function AllBooks() {
   const [search, setSearch] = useState("");
@@ -299,54 +300,62 @@ export default function AllBooks() {
   );
 }
 
-
 function Pagination({ currentPage, totalPages, setCurrentPage }) {
+  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
+
   return (
     <nav
-      className="mt-6 flex justify-center gap-6 select-none"
+      className="mt-8 flex flex-wrap items-center justify-center gap-3"
       aria-label="Pagination Navigation"
     >
+      {/* Previous Button */}
       <motion.button
-        whileHover={currentPage !== 1 ? { scale: 1.1, backgroundColor: "#2563EB", color: "#fff", boxShadow: "0 4px 10px rgba(37, 99, 235, 0.5)" } : {}}
+        whileHover={currentPage !== 1 ? { scale: 1.05 } : {}}
         whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
-        onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
         disabled={currentPage === 1}
-        className={`
-          px-5 py-2 rounded-lg border border-gray-300
-          focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer
-          ${currentPage === 1 ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" : "bg-white text-gray-700"}
-        `}
-        aria-label="Previous page"
+        onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
+        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all backdrop-blur-md ${currentPage === 1
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
+          }`}
       >
-        &lt; Prev
+        <ChevronLeft className="w-4 h-4" />
+        Prev
       </motion.button>
 
-      <motion.span
-        layout
-        initial={{ scale: 1 }}
-        animate={{ scale: 1.05 }}
-        transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        className="
-          px-7 py-2 rounded-lg border border-blue-600 bg-blue-50
-          font-semibold text-blue-700 select-none shadow-inner
-        "
-      >
-        {currentPage} / {totalPages}
-      </motion.span>
+      {/* Page Numbers */}
+      <div className="flex gap-2">
+        {pageNumbers.map((num) => (
+          <motion.button
+            key={num}
+            whileHover={num !== currentPage ? { scale: 1.1 } : {}}
+            whileTap={num !== currentPage ? { scale: 0.95 } : {}}
+            onClick={() => setCurrentPage(num)}
+            className={`w-10 h-10 rounded-full text-sm font-semibold transition-all flex items-center justify-center ${currentPage === num
+                ? "bg-blue-600 text-white shadow-lg"
+                : "bg-white/80 text-gray-800 hover:bg-blue-100"
+              }`}
+          >
+            {num}
+          </motion.button>
+        ))}
+      </div>
 
+      {/* Next Button */}
       <motion.button
-        whileHover={currentPage !== totalPages ? { scale: 1.1, backgroundColor: "#2563EB", color: "#fff", boxShadow: "0 4px 10px rgba(37, 99, 235, 0.5)" } : {}}
+        whileHover={currentPage !== totalPages ? { scale: 1.05 } : {}}
         whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
-        onClick={() => currentPage < totalPages && setCurrentPage(currentPage + 1)}
         disabled={currentPage === totalPages}
-        className={`
-          px-5 py-2 rounded-lg border border-gray-300
-          focus:outline-none focus:ring-2 focus:ring-blue-400 hover:cursor-pointer
-          ${currentPage === totalPages ? "opacity-50 cursor-not-allowed bg-gray-100 text-gray-400" : "bg-white text-gray-700"}
-        `}
-        aria-label="Next page"
+        onClick={() =>
+          currentPage < totalPages && setCurrentPage(currentPage + 1)
+        }
+        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all backdrop-blur-md ${currentPage === totalPages
+            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+            : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
+          }`}
       >
-        Next &gt;
+        Next
+        <ChevronRight className="w-4 h-4" />
       </motion.button>
     </nav>
   );
@@ -390,6 +399,11 @@ function SkeletonTable() {
 function NoResultsFallback({ searchTerm }) {
   return (
     <div className="text-center py-10 text-gray-600 text-lg">
+      <DotLottieReact
+        src="https://lottie.host/a0fce83e-dcda-4f6d-aeca-5bd3efe30c92/bc1GcXrliR.lottie"
+        loop
+        autoplay
+      />
       No results found for "<span className="font-semibold">{searchTerm}</span>"
     </div>
   );
