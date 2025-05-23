@@ -222,7 +222,7 @@ export default function AllBooks() {
                 <tbody>
                   {currentBooks.map((book) => (
                     <tr key={book._id} className="hover:bg-gray-50 transition-all duration-300">
-                      <td className="py-2 pl-2 flex items-center gap-2" onClick={() => { console.log(book) }}>
+                      <td className="py-2 pl-2 flex items-center gap-2 hover:cursor-pointer" onClick={() => { navigate(`/bookDetails/${book._id}`); }}>
                         {renderBookImageOrFallback(book)}
                         <span>{book.title}</span>
                       </td>

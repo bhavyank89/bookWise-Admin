@@ -135,7 +135,7 @@ function MainApp() {
                 element={<AnimatedPage><UpdateBook /></AnimatedPage>}
               />
               <Route
-                path="/bookDetails"
+                path="/bookDetails/:bookId"
                 element={<AnimatedPage><BookDetails /></AnimatedPage>}
               />
             </Routes>
