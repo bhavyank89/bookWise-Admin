@@ -58,11 +58,41 @@ function MainApp() {
 
   useEffect(() => {
     const cursor = document.querySelector('.custom-cursor');
-    const snapSound = new Audio('/sound1.wav'); // path from public folder
+    const snapSound = new Audio('/sound1.wav');
 
-    const moveCursor = (e) => {
-      cursor.style.top = `${e.clientY}px`;
-      cursor.style.left = `${e.clientX}px`;
+    let soundUnlocked = false;
+
+    const unlockSound = () => {
+      if (!soundUnlocked) {
+        snapSound.play().catch(() => { }); // try to play silently
+        snapSound.pause();
+        snapSound.currentTime = 0;
+        soundUnlocked = true;
+      }
+    };
+
+    // Attach unlock logic on first click or keypress
+    document.addEventListener('click', unlockSound, { once: true });
+    document.addEventListener('keydown', unlockSound, { once: true });
+
+    let mouseX = 0;
+    let mouseY = 0;
+    let currentX = 0;
+    let currentY = 0;
+
+    const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
+
+    const animateCursor = () => {
+      currentX = lerp(currentX, mouseX, 0.3);
+      currentY = lerp(currentY, mouseY, 0.3);
+      cursor.style.left = `${currentX}px`;
+      cursor.style.top = `${currentY}px`;
+      requestAnimationFrame(animateCursor);
+    };
+
+    const handleMouseMove = (e) => {
+      mouseX = e.clientX;
+      mouseY = e.clientY;
       cursor.classList.add('custom-cursor--init');
     };
 
@@ -74,8 +104,11 @@ function MainApp() {
 
       if (link || button) {
         cursor.classList.add('custom-cursor--hover');
-        snapSound.currentTime = 0;
-        snapSound.play().catch(() => { }); // prevent uncaught promise on autoplay block
+
+        if (soundUnlocked) {
+          snapSound.currentTime = 0;
+          snapSound.play().catch(() => { });
+        }
       }
     };
 
@@ -83,18 +116,20 @@ function MainApp() {
       cursor.classList.remove('custom-cursor--hover');
     };
 
-    document.addEventListener('mousemove', moveCursor);
+    document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseover', handleMouseOver);
     document.addEventListener('mouseout', handleMouseOut);
 
+    animateCursor();
+
     return () => {
-      document.removeEventListener('mousemove', moveCursor);
+      document.removeEventListener('click', unlockSound);
+      document.removeEventListener('keydown', unlockSound);
+      document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseover', handleMouseOver);
       document.removeEventListener('mouseout', handleMouseOut);
     };
   }, []);
-
-
 
 
   return (
