@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import './custom-cursor.css';
 
 import Navbar from "@/components/Navbar";
 import Loader from "@/components/Loader";
@@ -23,7 +24,6 @@ const AllUsers = lazy(() => import("@/components/AllUsers"));
 const AllBooks = lazy(() => import("@/components/AllBooks"));
 const CreateBook = lazy(() => import("@/components/CreateBook"));
 
-// Animation wrapper
 const AnimatedPage = ({ children }) => (
   <motion.div
     className="w-full"
@@ -56,27 +56,68 @@ function MainApp() {
     document.title = titles[location.pathname] || "Library App";
   }, [location.pathname]);
 
+  useEffect(() => {
+    const cursor = document.querySelector('.custom-cursor');
+    const snapSound = new Audio('/sound1.wav'); // path from public folder
+
+    const moveCursor = (e) => {
+      cursor.style.top = `${e.clientY}px`;
+      cursor.style.left = `${e.clientX}px`;
+      cursor.classList.add('custom-cursor--init');
+    };
+
+    const handleMouseOver = (e) => {
+      const link = e.target.closest('a');
+      const button = e.target.closest('button');
+
+      cursor.classList.remove('custom-cursor--hover');
+
+      if (link || button) {
+        cursor.classList.add('custom-cursor--hover');
+        snapSound.currentTime = 0;
+        snapSound.play().catch(() => { }); // prevent uncaught promise on autoplay block
+      }
+    };
+
+    const handleMouseOut = () => {
+      cursor.classList.remove('custom-cursor--hover');
+    };
+
+    document.addEventListener('mousemove', moveCursor);
+    document.addEventListener('mouseover', handleMouseOver);
+    document.addEventListener('mouseout', handleMouseOut);
+
+    return () => {
+      document.removeEventListener('mousemove', moveCursor);
+      document.removeEventListener('mouseover', handleMouseOver);
+      document.removeEventListener('mouseout', handleMouseOut);
+    };
+  }, []);
+
+
+
+
   return (
     <section className="bg-[#F8F8FF] min-h-screen flex flex-col md:flex-row relative overflow-x-hidden">
+      {/* Custom Cursor */}
+      <div className="custom-cursor" />
+
       {/* Hamburger Icon */}
       <button
         className="md:hidden fixed top-4 left-4 z-50 flex flex-col justify-between w-8 h-8 focus:outline-none"
         onClick={() => setShowSidebar(!showSidebar)}
       >
         <span
-          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${
-            showSidebar ? "rotate-45 translate-y-3" : ""
-          }`}
+          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "rotate-45 translate-y-3" : ""
+            }`}
         />
         <span
-          className={`block h-1 w-full bg-black rounded transition-opacity duration-300 ${
-            showSidebar ? "opacity-0" : "opacity-100"
-          }`}
+          className={`block h-1 w-full bg-black rounded transition-opacity duration-300 ${showSidebar ? "opacity-0" : "opacity-100"
+            }`}
         />
         <span
-          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${
-            showSidebar ? "-rotate-45 -translate-y-3" : ""
-          }`}
+          className={`block h-1 w-full bg-black rounded transition-transform duration-300 ${showSidebar ? "-rotate-45 -translate-y-3" : ""
+            }`}
         />
       </button>
 
@@ -146,7 +187,6 @@ function MainApp() {
   );
 }
 
-// App Entry Point with Router and Tooltip provider
 export default function Home() {
   return (
     <Tooltip.Provider>

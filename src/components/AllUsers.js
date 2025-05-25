@@ -1,228 +1,285 @@
-// AllUsersDashboard.tsx
-"use client";
-
 import React, { useEffect, useState } from "react";
-import { Trash } from "lucide-react";
+import toast, { Toaster } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Trash2, ChevronDown } from "lucide-react";
 
-const SkeletonBox = ({ width = "w-full", height = "h-4" }) => (
-    <div className={`bg-gray-200 animate-pulse rounded ${width} ${height}`}></div>
-);
-
-const AllUsersDashboard = () => {
-    const [loading, setLoading] = useState(true);
+export default function MyComponent() {
     const [users, setUsers] = useState([]);
-    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredUsers, setFilteredUsers] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [search, setSearch] = useState("");
+    const [sortAsc, setSortAsc] = useState(true);
     const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 5;
 
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [selectedUser, setSelectedUser] = useState(null);
+    const [inputEmail, setInputEmail] = useState("");
+
     useEffect(() => {
-        setTimeout(() => {
-            setUsers([
-                {
-                    name: "Darrell Steward",
-                    email: "darrellsteward@gmail.com",
-                    dateJoined: "Dec 19 2023",
-                    role: "User",
-                    borrowed: 10,
-                    idNo: "90324423789",
-                    avatar: "https://i.imgur.com/B0yUQmE.png",
-                },
-                {
-                    name: "Marc Atenson",
-                    email: "marcinee@mial.com",
-                    dateJoined: "Dec 19 2023",
-                    role: "Admin",
-                    borrowed: 32,
-                    idNo: "90324423789",
-                    avatar: "https://i.imgur.com/1nZb8FA.png",
-                },
-                {
-                    name: "Susan Drake",
-                    email: "contact@susandrak.io",
-                    dateJoined: "Dec 19 2023",
-                    role: "User",
-                    borrowed: 13,
-                    idNo: "90324423789",
-                    initials: "SD",
-                },
-                // Add more dummy data for pagination demo
-                {
-                    name: "John Doe",
-                    email: "john@example.com",
-                    dateJoined: "Jan 01 2024",
-                    role: "User",
-                    borrowed: 5,
-                    idNo: "90324423790",
-                    initials: "JD",
-                },
-                {
-                    name: "Jane Smith",
-                    email: "jane@smith.io",
-                    dateJoined: "Feb 02 2024",
-                    role: "Admin",
-                    borrowed: 17,
-                    idNo: "90324423791",
-                    initials: "JS",
-                },
-            ]);
-            setLoading(false);
-        }, 1500);
+        async function fetchUsers() {
+            try {
+                setLoading(true);
+                const res = await fetch("http://localhost:4000/fetchall");
+                const json = await res.json();
+                if (!res.ok) throw new Error(json.message || "Failed to fetch users");
+                setUsers(json.users || []);
+                console.log("Fetched users:", json.users);
+            } catch (err) {
+                toast.error(err.message);
+            } finally {
+                setLoading(false);
+            }
+        }
+        setTimeout(fetchUsers, 1000);
     }, []);
 
-    const handleSort = (key) => {
+    useEffect(() => {
+        let filtered = users.filter(
+            (user) =>
+                user.name?.toLowerCase().includes(search.toLowerCase()) ||
+                user.email?.toLowerCase().includes(search.toLowerCase())
+        );
+
+        if (sortConfig.key) {
+            filtered.sort((a, b) => {
+                const valA = (a[sortConfig.key] || "").toString().toLowerCase();
+                const valB = (b[sortConfig.key] || "").toString().toLowerCase();
+                if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+                if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+                return 0;
+            });
+        }
+
+        setFilteredUsers(filtered);
+    }, [users, search, sortConfig]);
+
+    const paginatedUsers = filteredUsers.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
+    const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+
+    const toggleSort = (key) => {
         setSortConfig((prev) => ({
             key,
             direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
         }));
     };
 
-    const filteredUsers = users.filter(user =>
-        user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const handleDelete = async () => {
+        if (!selectedUser || inputEmail !== selectedUser.email) {
+            toast.error("Email does not match!");
+            return;
+        }
 
-    const sortedUsers = [...filteredUsers].sort((a, b) => {
-        const aVal = a[sortConfig.key]?.toString().toLowerCase();
-        const bVal = b[sortConfig.key]?.toString().toLowerCase();
-        if (!aVal || !bVal) return 0;
-        return sortConfig.direction === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-    });
+        try {
+            const res = await fetch(`/api/user/${selectedUser._id}`, {
+                method: "DELETE",
+            });
+            const json = await res.json();
+            if (!res.ok) throw new Error(json.message || "Deletion failed");
 
-    const totalPages = Math.ceil(sortedUsers.length / usersPerPage);
-    const paginatedUsers = sortedUsers.slice((currentPage - 1) * usersPerPage, currentPage * usersPerPage);
+            toast.success("User deleted!");
+            setUsers((prev) => prev.filter((u) => u._id !== selectedUser._id));
+            setShowDeleteModal(false);
+            setInputEmail("");
+        } catch (err) {
+            toast.error(err.message);
+        }
+    };
 
     return (
-        <div className="p-6">
-            <div className="mb-6">
-                <h1 className="font-bold text-2xl">Welcome, Adrian</h1>
-                <p className="text-sm text-gray-500">Monitor all of your projects and tasks here</p>
-            </div>
+        <div className="p-6 max-w-7xl mx-auto">
+            <Toaster position="top-right" />
+            <h1 className="text-2xl font-semibold mb-1">Welcome, Adrian</h1>
+            <p className="text-sm text-gray-500 mb-6">Monitor all of your projects and tasks here</p>
 
-            <div className="bg-white p-5 rounded-xl shadow-md">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="font-semibold text-lg">All Users</h2>
+            <div className="mb-4 bg-white rounded shadow p-4">
+                <h2 className="text-lg font-bold mb-4">All Users</h2>
+                <div className="flex items-center justify-between mb-4">
                     <input
                         type="text"
-                        placeholder="Search users by name or email"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="px-3 py-2 border border-gray-200 rounded-md w-80 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        placeholder="Search users by name, email, or university ID."
+                        className="w-1/2 px-4 py-2 border rounded shadow-sm"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
                     />
+                    <button
+                        onClick={() => {
+                            setSortAsc(!sortAsc);
+                            setSortConfig({
+                                key: "createdAt",
+                                direction: sortAsc ? "asc" : "desc",
+                            });
+                        }}
+                        className="flex items-center gap-1 border px-4 py-2 rounded shadow-sm"
+                    >
+                        {sortAsc ? "Oldest to Recent" : "Recent to Oldest"}
+                        <ChevronDown size={16} className={`${sortAsc ? "rotate-180" : ""} transition-transform`} />
+                    </button>
                 </div>
 
-                <div className="overflow-auto">
-                    <table className="w-full text-left">
-                        <thead className="bg-[#F8F8FF] text-sm text-[#64748B]">
-                            <tr>
-                                {[
-                                    { key: "name", label: "Name" },
-                                    { key: "dateJoined", label: "Date Joined" },
-                                    { key: "role", label: "Role" },
-                                    { key: "borrowed", label: "Books Borrowed" },
-                                    { key: "idNo", label: "University ID No" },
-                                ].map((col) => (
-                                    <th
-                                        key={col.key}
-                                        onClick={() => handleSort(col.key)}
-                                        className="px-4 py-2 cursor-pointer hover:text-blue-600 select-none"
-                                    >
-                                        {col.label} {sortConfig.key === col.key ? (sortConfig.direction === "asc" ? "↑" : "↓") : ""}
-                                    </th>
-                                ))}
-                                <th className="px-4 py-2">University ID Card</th>
-                                <th className="px-4 py-2">Action</th>
+                <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-left">
+                        <thead>
+                            <tr className="text-gray-600 bg-[#F8F8FF]">
+                                <th className="py-2 pl-2 w-1/4" onClick={() => toggleSort("name")}>Name</th>
+                                <th className="p-3">University ID</th>
+                                <th className="p-3">Created</th>
+                                <th className="p-3">Borrowed Books</th>
+                                <th className="py-2 w-1/5">University ID Card</th>
+                                <th className="p-3">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {loading ? (
-                                [...Array(6)].map((_, i) => (
+                                [...Array(usersPerPage)].map((_, i) => (
                                     <tr key={i}>
-                                        {[...Array(7)].map((__, j) => (
-                                            <td key={j} className="px-4 py-4">
-                                                <SkeletonBox width="w-24" height="h-4" />
-                                            </td>
-                                        ))}
+                                        <td colSpan={8}><Skeleton className="h-10 w-full my-2" /></td>
                                     </tr>
                                 ))
-                            ) : (
+                            ) : paginatedUsers.length > 0 ? (
                                 <AnimatePresence>
-                                    {paginatedUsers.map((user, i) => (
+                                    {paginatedUsers.map((user) => (
                                         <motion.tr
-                                            key={i}
-                                            className="text-sm hover:bg-gray-50 transition-all"
+                                            key={user._id}
                                             initial={{ opacity: 0, y: 10 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
                                             transition={{ duration: 0.2 }}
+                                            className="hover:bg-gray-50"
                                         >
-                                            <td className="px-4 py-4 flex items-center gap-3">
-                                                {user.avatar ? (
-                                                    <img src={user.avatar} className="w-8 h-8 rounded-full" alt="avatar" />
+                                            <td className="py-2 pl-2 flex items-center gap-3">
+                                                {user.avatar?.[0]?.path ? (
+                                                    <img
+                                                        src={user.avatar?.[0]?.path}
+                                                        alt="avatar"
+                                                        className="w-8 h-8 rounded-full"
+                                                    />
                                                 ) : (
-                                                    <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-white font-bold">
-                                                        {user.initials}
+                                                    <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold">
+                                                        {user.name?.[0] || "?"}
                                                     </div>
                                                 )}
                                                 <div>
-                                                    <p className="font-medium text-[#1E293B]">{user.name}</p>
-                                                    <p className="text-xs text-[#64748B]">{user.email}</p>
+                                                    <div className="font-medium">{user.name}</div>
+                                                    <div className="text-xs text-gray-500">{user.email}</div>
                                                 </div>
                                             </td>
-                                            <td className="px-4 py-4">{user.dateJoined}</td>
-                                            <td className="px-4 py-4">
-                                                <span
-                                                    className={`text-xs font-medium px-2 py-1 rounded-full ${user.role === "Admin"
-                                                        ? "bg-green-100 text-green-700"
-                                                        : "bg-pink-100 text-pink-700"
-                                                        }`}
+                                            <td className="p-3">{user.uniId}</td>
+                                            <td className="p-3">{new Date(user.createdAt).toLocaleDateString()}</td>
+                                            <td className="p-3">{user.books?.length || 0}</td>
+                                            <td className="p-3">
+                                                {user.uniIdDoc?.[0]?.path ? (
+                                                    <a
+                                                        href={user.uniIdDoc?.[0]?.path}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-blue-600 underline"
+                                                    >
+                                                        View ID
+                                                    </a>
+                                                ) : "—"}
+                                            </td>
+                                            <td className="p-3">
+                                                <motion.button
+                                                    whileHover={{ scale: 1.1, rotate: -5 }}
+                                                    whileTap={{ scale: 0.95 }}
+                                                    onClick={() => {
+                                                        setSelectedUser(user);
+                                                        setShowDeleteModal(true);
+                                                    }}
+                                                    className="text-red-600 hover:text-red-800"
                                                 >
-                                                    {user.role}
-                                                </span>
-                                            </td>
-                                            <td className="px-4 py-4">{user.borrowed}</td>
-                                            <td className="px-4 py-4">{user.idNo}</td>
-                                            <td className="px-4 py-4">
-                                                <a href="#" className="text-sm text-[#25388C] underline">
-                                                    View ID Card ↗
-                                                </a>
-                                            </td>
-                                            <td className="px-4 py-4">
-                                                <button>
-                                                    <Trash size={16} className="text-red-500 hover:text-red-700" />
-                                                </button>
+                                                    <Trash2 size={20} />
+                                                </motion.button>
                                             </td>
                                         </motion.tr>
                                     ))}
                                 </AnimatePresence>
+                            ) : (
+                                <tr>
+                                    <td colSpan={8} className="text-center py-8 text-gray-500">
+                                        No users found. Try adjusting your search.
+                                    </td>
+                                </tr>
                             )}
                         </tbody>
                     </table>
-                    {!loading && sortedUsers.length === 0 && (
-                        <div className="text-center py-6 text-gray-500">
-                            <p className="text-lg font-medium">No users match your search 🔍</p>
-                            <p className="text-sm">Try a different name or email address.</p>
-                        </div>
-                    )}
                 </div>
 
-                {/* Pagination Controls */}
-                <div className="mt-4 flex justify-center gap-2">
-                    {Array.from({ length: totalPages }, (_, i) => (
-                        <button
-                            key={i}
-                            onClick={() => setCurrentPage(i + 1)}
-                            className={`px-3 py-1 rounded-md text-sm ${currentPage === i + 1 ? "bg-blue-500 text-white" : "bg-gray-100 text-gray-700"
-                                } hover:bg-blue-400 hover:text-white transition-all`}
-                        >
-                            {i + 1}
-                        </button>
-                    ))}
-                </div>
+                {totalPages > 1 && (
+                    <div className="flex justify-between items-center mt-6">
+                        <p className="text-sm text-gray-500">
+                            Showing page {currentPage} of {totalPages}
+                        </p>
+                        <div className="flex gap-2">
+                            {[...Array(totalPages)].map((_, i) => (
+                                <button
+                                    key={i}
+                                    onClick={() => setCurrentPage(i + 1)}
+                                    className={`px-3 py-1 rounded-lg shadow-sm text-sm ${currentPage === i + 1
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-gray-200 hover:bg-gray-300"
+                                        }`}
+                                >
+                                    {i + 1}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
             </div>
+
+            {/* Confirm Delete Modal */}
+            <AnimatePresence>
+                {showDeleteModal && selectedUser && (
+                    <motion.div
+                        key="delete-modal"
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            transition={{ duration: 0.2 }}
+                            className="bg-white p-6 rounded-xl w-full max-w-md shadow-lg"
+                        >
+                            <h2 className="text-lg font-semibold mb-2">Confirm Deletion</h2>
+                            <p className="text-sm text-gray-600 mb-4">
+                                Type <strong>{selectedUser.email}</strong> to confirm user deletion.
+                            </p>
+                            <input
+                                type="email"
+                                value={inputEmail}
+                                onChange={(e) => setInputEmail(e.target.value)}
+                                className="w-full border rounded-md p-2 mb-4"
+                                placeholder="Enter email"
+                            />
+                            <div className="flex justify-end gap-3">
+                                <button
+                                    onClick={() => {
+                                        setShowDeleteModal(false);
+                                        setInputEmail("");
+                                    }}
+                                    className="px-4 py-2 rounded-md bg-gray-200 hover:bg-gray-300"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleDelete}
+                                    className="px-4 py-2 rounded-md bg-red-600 text-white hover:bg-red-700"
+                                >
+                                    Delete
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
-};
-
-export default AllUsersDashboard;
+}

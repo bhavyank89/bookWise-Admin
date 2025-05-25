@@ -35,7 +35,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
     return (
         <section className="bg-gray-50 p-4 w-full flex flex-col gap-6 h-full shadow-lg">
             {/* Header */}
-            <div onClick={() => handleNavigation("/dashboard")} className="cursor-pointer pt-2">
+            <div onClick={() => handleNavigation("/dashboard")} className=" pt-2">
                 <h1 className="text-3xl text-[#25388C] font-bold flex items-center gap-2">
                     <BookOpen size={28} /> BookWise
                 </h1>
@@ -46,7 +46,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
             <nav>
                 <ul className="flex flex-col gap-2 text-gray-700">
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}
@@ -55,7 +55,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         <House size={18} /> Home
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-users")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-users")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}
@@ -64,7 +64,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         <Users size={18} /> All Users
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-books")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/all-books")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}
@@ -73,7 +73,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         <Book size={18} /> All Books
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/borrow-requests")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/borrow-requests")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}
@@ -82,7 +82,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         <BookMarked size={18} /> Borrow Requests
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/account-requests")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/account-requests")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}
@@ -91,7 +91,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         <UserRound size={18} /> Account Requests
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/createBook")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/createBook")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}
@@ -100,7 +100,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         <Pen size={18} /> Create Book
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/updateBook")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/updateBook")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}
@@ -109,7 +109,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         <UploadCloud size={18} /> Update Book
                     </li>
                     <li
-                        className={`cursor-pointer p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/bookDetails")
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/bookDetails")
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
                             }`}

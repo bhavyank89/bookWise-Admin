@@ -82,7 +82,7 @@ const BookDetails = () => {
             </div>
 
             <div className="mb-4">
-                <button onClick={handleGoBack} className="text-sm flex items-center gap-2 mb-5 p-2 rounded-md shadow-sm hover:shadow-md transition bg-white text-[#25388C] hover:underline hover:cursor-pointer">
+                <button onClick={handleGoBack} className="text-sm flex items-center gap-2 mb-5 p-2 rounded-md shadow-sm hover:shadow-md transition bg-white text-[#25388C] hover:underline ">
                     <ArrowLeft size={18} /> Go back
                 </button>
             </div>
@@ -105,13 +105,13 @@ const BookDetails = () => {
                     </div>
 
                     <div className="flex flex-wrap gap-3 mt-4">
-                        <motion.button whileTap={{ scale: 0.95 }} onClick={toggleEdit} className="bg-[#25388C] text-white font-medium py-2 px-6 rounded-lg shadow hover:bg-[#1d2d70] transition hover:cursor-pointer">
+                        <motion.button whileTap={{ scale: 0.95 }} onClick={toggleEdit} className="bg-[#25388C] text-white font-medium py-2 px-6 rounded-lg shadow hover:bg-[#1d2d70] transition ">
                             Edit Book
                         </motion.button>
-                        <motion.button whileTap={{ scale: 0.95 }} onClick={handleViewPDF} className="bg-green-600 text-white font-medium py-2 px-6 rounded-lg shadow hover:bg-green-700 transition flex items-center gap-2 hover:cursor-pointer">
+                        <motion.button whileTap={{ scale: 0.95 }} onClick={handleViewPDF} className="bg-green-600 text-white font-medium py-2 px-6 rounded-lg shadow hover:bg-green-700 transition flex items-center gap-2 ">
                             <FileText size={18} /> View PDF
                         </motion.button>
-                        <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowDeleteModal(true)} className="bg-red-600 text-white font-medium py-2 px-6 rounded-lg shadow hover:bg-red-700 transition flex items-center gap-2 hover:cursor-pointer">
+                        <motion.button whileTap={{ scale: 0.95 }} onClick={() => setShowDeleteModal(true)} className="bg-red-600 text-white font-medium py-2 px-6 rounded-lg shadow hover:bg-red-700 transition flex items-center gap-2 ">
                             <Trash2 size={18} /> Delete
                         </motion.button>
                     </div>
@@ -145,13 +145,13 @@ const BookDetails = () => {
                         <div className="flex justify-end gap-2">
                             <button
                                 onClick={() => setShowDeleteModal(false)}
-                                className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-md hover:cursor-pointer"
+                                className="px-4 py-2 text-sm bg-gray-100 hover:bg-gray-200 rounded-md "
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handleDelete}
-                                className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md hover:cursor-pointer"
+                                className="px-4 py-2 text-sm bg-red-600 hover:bg-red-700 text-white rounded-md "
                             >
                                 Delete
                             </button>

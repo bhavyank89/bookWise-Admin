@@ -109,7 +109,7 @@ export default function CreateBook() {
 
             <div className="transition-all duration-300">
                 <button
-                    className="text-sm flex flex-row gap-2 mb-4 p-2 rounded-md shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer bg-white text-[#25388C] hover:underline"
+                    className="text-sm flex flex-row gap-2 mb-4 p-2 rounded-md shadow-md hover:shadow-xl transition-shadow duration-300  bg-white text-[#25388C] hover:underline"
                     onClick={() => navigate("/all-books")}
                 >
                     <ArrowLeft size={18} />
@@ -144,7 +144,7 @@ export default function CreateBook() {
                             <iframe src={preview.pdf} className="w-full h-64 border rounded" title="PDF Preview" />
                         )}
                         <TextArea label="Book Summary" name="summary" value={formData.summary} onChange={handleChange} placeholder="Write a brief summary of the book" />
-                        <button type="submit" className="w-full py-2 rounded bg-blue-800 text-white hover:bg-blue-900 transition hover:cursor-pointer">
+                        <button type="submit" className="w-full py-2 rounded bg-blue-800 text-white hover:bg-blue-900 transition ">
                             Create Book
                         </button>
                     </form>
@@ -173,7 +173,7 @@ export default function CreateBook() {
                         </p>
                         <button
                             onClick={closeModalAndRedirect}
-                            className="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900 transition hover:cursor-pointer"
+                            className="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900 transition "
                         >
                             Go to All Books
                         </button>

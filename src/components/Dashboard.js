@@ -87,7 +87,7 @@ function Dashboard() {
                 ].map((item, i) => (
                     <motion.div
                         key={i}
-                        className="bg-white w-1/3 shadow-md rounded-xl p-5 hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+                        className="bg-white w-1/3 shadow-md rounded-xl p-5 hover:shadow-xl transition-shadow duration-300 "
                         whileHover={{ scale: 1.03 }}
                     >
                         <h1 className="font-semibold text-sm text-[#64748B]">{item.label}</h1>
@@ -148,7 +148,7 @@ function Dashboard() {
                         <a href="#" className="text-sm bg-[#F8F8FF] p-2 rounded-sm text-[#25388C] hover:underline">View all</a>
                     </div>
 
-                    <div className="flex items-center gap-3 mb-4 bg-[#F8F8FF] p-2 rounded-lg cursor-pointer hover:bg-[#E2E8F0] transition-colors">
+                    <div className="flex items-center gap-3 mb-4 bg-[#F8F8FF] p-2 rounded-lg  hover:bg-[#E2E8F0] transition-colors">
                         <button className="flex items-center gap-1 text-sm text-black px-3 py-1">
                             <div className="p-2 rounded-4xl bg-white mr-2"><Plus size={16} /></div> Add New Book
                         </button>

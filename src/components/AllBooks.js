@@ -187,7 +187,7 @@ export default function AllBooks() {
 
               <button
                 onClick={() => navigate("/createBook")}
-                className="px-4 py-2 bg-blue-700 text-white rounded flex items-center gap-2 hover:cursor-pointer transition-transform duration-200"
+                className="px-4 py-2 bg-blue-700 text-white rounded flex items-center gap-2  transition-transform duration-200"
               >
                 <Plus size={16} /> Create a New Book
               </button>
@@ -204,7 +204,7 @@ export default function AllBooks() {
                 <thead>
                   <tr className="text-gray-600 bg-[#F8F8FF] p-2">
                     <th
-                      className="py-2 pl-2 cursor-pointer select-none w-[40%]"
+                      className="py-2 pl-2  select-none w-[40%]"
                       onClick={() => handleSortClick("title")}
                     >
                       Book Title{renderSortArrow("title")}
@@ -212,7 +212,7 @@ export default function AllBooks() {
                     <th className="w-[20%]">Author</th>
                     <th className="w-[15%]">Genre</th>
                     <th
-                      className="cursor-pointer select-none w-[15%]"
+                      className=" select-none w-[15%]"
                       onClick={() => handleSortClick("updatedAt")}
                     >
                       Date Updated{renderSortArrow("updatedAt")}
@@ -223,7 +223,7 @@ export default function AllBooks() {
                 <tbody>
                   {currentBooks.map((book) => (
                     <tr key={book._id} className="hover:bg-gray-50 transition-all duration-300">
-                      <td className="py-2 pl-2 flex items-center gap-2 hover:cursor-pointer" onClick={() => { navigate(`/bookDetails/${book._id}`); }}>
+                      <td className="py-2 pl-2 flex items-center gap-2 " onClick={() => { navigate(`/bookDetails/${book._id}`); }}>
                         {renderBookImageOrFallback(book)}
                         <span>{book.title}</span>
                       </td>
@@ -232,14 +232,14 @@ export default function AllBooks() {
                       <td>{formatDate(book.updatedAt)}</td>
                       <td className="flex items-center gap-4">
                         <button
-                          className="text-blue-700 hover:opacity-80 transition-opacity duration-200 hover:cursor-pointer"
+                          className="text-blue-700 hover:opacity-80 transition-opacity duration-200 "
                           onClick={() => navigate(`/update/${book._id}`)}
                           aria-label={`Edit ${book.title}`}
                         >
                           <Pencil size={16} />
                         </button>
                         <button
-                          className="text-red-700 hover:opacity-80 transition-opacity duration-200 hover:cursor-pointer"
+                          className="text-red-700 hover:opacity-80 transition-opacity duration-200 "
                           onClick={() => handleDeleteClick(book)}
                           aria-label={`Delete ${book.title}`}
                         >
@@ -281,13 +281,13 @@ export default function AllBooks() {
                     setShowModal(false);
                     setBookToDelete(null);
                   }}
-                  className="px-4 py-2 bg-gray-300 rounded hover:cursor-pointer hover:bg-gray-400 transition"
+                  className="px-4 py-2 bg-gray-300 rounded  hover:bg-gray-400 transition"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={confirmDeleteBook}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition hover:cursor-pointer"
+                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition "
                 >
                   Delete
                 </button>
@@ -315,8 +315,8 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
         disabled={currentPage === 1}
         onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all backdrop-blur-md ${currentPage === 1
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
           }`}
       >
         <ChevronLeft className="w-4 h-4" />
@@ -332,8 +332,8 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
             whileTap={num !== currentPage ? { scale: 0.95 } : {}}
             onClick={() => setCurrentPage(num)}
             className={`w-10 h-10 rounded-full text-sm font-semibold transition-all flex items-center justify-center ${currentPage === num
-                ? "bg-blue-600 text-white shadow-lg"
-                : "bg-white/80 text-gray-800 hover:bg-blue-100"
+              ? "bg-blue-600 text-white shadow-lg"
+              : "bg-white/80 text-gray-800 hover:bg-blue-100"
               }`}
           >
             {num}
@@ -350,8 +350,8 @@ function Pagination({ currentPage, totalPages, setCurrentPage }) {
           currentPage < totalPages && setCurrentPage(currentPage + 1)
         }
         className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all backdrop-blur-md ${currentPage === totalPages
-            ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-            : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
+          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+          : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
           }`}
       >
         Next

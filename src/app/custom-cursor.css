@@ -1,0 +1,44 @@
+.custom-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    margin-left: -10px;
+    margin-top: -10px;
+    border-radius: 50%;
+    background-color: white;
+    pointer-events: none;
+    mix-blend-mode: difference;
+    opacity: 0;
+    transform: scale(1) rotate(0deg);
+    transition:
+        top 50ms linear,
+        left 50ms linear,
+        transform 200ms ease,
+        width 200ms ease,
+        height 200ms ease,
+        margin 200ms ease,
+        border-radius 200ms ease,
+        background-color 200ms ease,
+        border 200ms ease,
+        opacity 200ms ease;
+    z-index: 9999;
+}
+
+.custom-cursor--init {
+    opacity: 1;
+}
+
+/* 🎯 Cursor transform on hover for visual pop */
+.custom-cursor--hover {
+    width: 40px;
+    height: 40px;
+    margin-left: -20px;
+    margin-top: -20px;
+    border-radius: 50%;
+    background-color: transparent;
+    border: 2px solid white;
+    transform: scale(1.2) rotate(10deg);
+    /* Slight scale and rotate */
+}
