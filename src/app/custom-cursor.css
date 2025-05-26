@@ -35,8 +35,6 @@ button {
     opacity: 0;
     transform: scale(1) rotate(0deg);
     transition:
-        top 50ms linear,
-        left 50ms linear,
         transform 200ms ease,
         width 200ms ease,
         height 200ms ease,
@@ -47,6 +45,7 @@ button {
         opacity 200ms ease;
     z-index: 9999;
 }
+
 
 .custom-cursor--init {
     opacity: 1;

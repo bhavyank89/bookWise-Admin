@@ -6,6 +6,19 @@ import { ArrowLeft } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
+const genres = [
+    "Fiction",
+    "Non-Fiction",
+    "Science Fiction",
+    "Fantasy",
+    "Biography",
+    "Mystery",
+    "Romance",
+    "Horror",
+    "Self-Help",
+    "Other",
+];
+
 export default function CreateBook() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
@@ -14,12 +27,14 @@ export default function CreateBook() {
         title: "",
         author: "",
         genre: "",
+        bookType: "physical", // NEW FIELD
         count: "",
         summary: "",
         uploadPDF: null,
         uploadThumbnail: null,
         uploadVideo: null,
     });
+
     const [preview, setPreview] = useState({
         thumbnail: null,
         pdf: null,
@@ -50,14 +65,21 @@ export default function CreateBook() {
 
         try {
             const data = new FormData();
-            data.append("title", formData.title);
-            data.append("author", formData.author);
+            data.append("title", formData.title.trim());
+            data.append("author", formData.author.trim());
             data.append("genre", formData.genre);
-            data.append("summary", formData.summary);
-            data.append("count", formData.count);
-            data.append("uploadPDF", formData.uploadPDF);
+            data.append("bookType", formData.bookType);
+            data.append("summary", formData.summary.trim());
+
+            if (formData.bookType === "physical" || formData.bookType === "both") {
+                data.append("count", Number(formData.count));
+            }
+
             if (formData.uploadThumbnail) data.append("uploadThumbnail", formData.uploadThumbnail);
-            if (formData.uploadVideo) data.append("uploadVideo", formData.uploadVideo);
+            if ((formData.bookType === "ebook" || formData.bookType === "both") && formData.uploadPDF)
+                data.append("uploadPDF", formData.uploadPDF);
+            if ((formData.bookType === "ebook" || formData.bookType === "both") && formData.uploadVideo)
+                data.append("uploadVideo", formData.uploadVideo);
 
             const response = await fetch("http://localhost:4000/book/createbook", {
                 method: "POST",
@@ -75,6 +97,7 @@ export default function CreateBook() {
             setLoading(false);
         }
     };
+
 
     const closeModalAndRedirect = () => {
         setModalOpen(false);
@@ -129,20 +152,74 @@ export default function CreateBook() {
                     <form onSubmit={handleCreate} className="space-y-4">
                         <Input label="Book Title" name="title" value={formData.title} onChange={handleChange} placeholder="Enter the book title" />
                         <Input label="Author" name="author" value={formData.author} onChange={handleChange} placeholder="Enter the author name" />
-                        <Input label="Genre" name="genre" value={formData.genre} onChange={handleChange} placeholder="Enter the genre of the book" />
-                        <Input label="Total number of books" name="count" value={formData.count} onChange={handleChange} type="number" placeholder="Enter the total number of books" />
+
+                        {/* Genre dropdown instead of free text */}
+                        <div className="flex flex-col">
+                            <label htmlFor="genre" className="mb-1 text-sm text-[#0F172A]">Genre</label>
+                            <select
+                                id="genre"
+                                name="genre"
+                                value={formData.genre}
+                                onChange={handleChange}
+                                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A]"
+                                required
+                            >
+                                <option value="" disabled>Select a genre</option>
+                                {genres.map((g) => (
+                                    <option key={g} value={g}>{g}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="flex flex-col">
+                            <label htmlFor="bookType" className="mb-1 text-sm text-[#0F172A]">Book Type</label>
+                            <select
+                                id="bookType"
+                                name="bookType"
+                                value={formData.bookType}
+                                onChange={handleChange}
+                                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A]"
+                                required
+                            >
+                                <option value="physical">Physical</option>
+                                <option value="ebook">eBook</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+
+                        {(formData.bookType === "physical" || formData.bookType === "both") && (
+                            <Input
+                                label="Total number of books"
+                                name="count"
+                                value={formData.count}
+                                onChange={handleChange}
+                                type="number"
+                                placeholder="Enter the total number of books"
+                                min={1}
+                            />
+                        )}
+
                         <Input label="Book Image" name="uploadThumbnail" type="file" onChange={handleChange} />
                         {preview.thumbnail && (
                             <img src={preview.thumbnail} alt="Thumbnail Preview" className="w-32 h-32 object-cover rounded shadow-md" />
                         )}
-                        <Input label="Book Video" name="uploadVideo" type="file" onChange={handleChange} />
-                        {preview.video && (
-                            <video src={preview.video} controls className="w-64 h-auto rounded shadow-md" />
+                        {(formData.bookType === "ebook" || formData.bookType === "both") && (
+                            <>
+                                <Input label="Upload PDF" name="uploadPDF" type="file" onChange={handleChange} />
+                                {preview.pdf && (
+                                    <iframe src={preview.pdf} className="w-full h-64 border rounded" title="PDF Preview" />
+                                )}
+                            </>
                         )}
-                        <Input label="Upload PDF" name="uploadPDF" type="file" onChange={handleChange} />
-                        {preview.pdf && (
-                            <iframe src={preview.pdf} className="w-full h-64 border rounded" title="PDF Preview" />
+
+                        {(formData.bookType === "ebook" || formData.bookType === "both") && (
+                            <>
+                                <Input label="Book Video" name="uploadVideo" type="file" onChange={handleChange} />
+                                {preview.video && (
+                                    <video src={preview.video} controls className="w-64 h-auto rounded shadow-md" />
+                                )}
+                            </>
                         )}
+
                         <TextArea label="Book Summary" name="summary" value={formData.summary} onChange={handleChange} placeholder="Write a brief summary of the book" />
                         <button type="submit" className="w-full py-2 rounded bg-blue-800 text-white hover:bg-blue-900 transition ">
                             Create Book
@@ -173,9 +250,9 @@ export default function CreateBook() {
                         </p>
                         <button
                             onClick={closeModalAndRedirect}
-                            className="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900 transition "
+                            className="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900"
                         >
-                            Go to All Books
+                            Close Now
                         </button>
                     </motion.div>
                 </motion.div>
@@ -184,37 +261,20 @@ export default function CreateBook() {
     );
 }
 
-function Input({ label, name, type = "text", placeholder, value, onChange }) {
-    const inputStyles = `
-        bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 
-        placeholder-[#64748B] text-[#0F172A]
-    `;
-
+function Input({ label, name, value, onChange, type = "text", placeholder }) {
     return (
         <div className="flex flex-col">
             <label htmlFor={name} className="mb-1 text-sm text-[#0F172A]">{label}</label>
-            {type === "file" ? (
-                <input
-                    id={name}
-                    name={name}
-                    type="file"
-                    accept={name === "uploadPDF" ? "application/pdf" : name === "uploadVideo" ? "video/*" : "image/*"}
-                    onChange={onChange}
-                    className="bg-[#F9FAFB] border text-[#0F172A] file:mr-4 file:py-2 file:px-4 
-                               file:rounded file:border-0 file:text-sm file:font-semibold 
-                               file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                />
-            ) : (
-                <input
-                    id={name}
-                    name={name}
-                    type={type}
-                    placeholder={placeholder}
-                    value={value}
-                    onChange={onChange}
-                    className={inputStyles}
-                />
-            )}
+            <input
+                type={type}
+                id={name}
+                name={name}
+                value={type === "file" ? undefined : value}
+                onChange={onChange}
+                placeholder={placeholder}
+                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A]"
+                {...(type === "file" ? { accept: type === "file" && name === "uploadPDF" ? "application/pdf" : type === "file" && name === "uploadThumbnail" ? "image/*" : "video/*" } : {})}
+            />
         </div>
     );
 }
@@ -226,11 +286,11 @@ function TextArea({ label, name, value, onChange, placeholder }) {
             <textarea
                 id={name}
                 name={name}
-                placeholder={placeholder}
                 value={value}
                 onChange={onChange}
-                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm resize-none focus:outline-blue-500 placeholder-[#64748B] text-[#0F172A]"
-                rows={5}
+                placeholder={placeholder}
+                rows={4}
+                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A]"
             />
         </div>
     );
