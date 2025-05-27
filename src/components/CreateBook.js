@@ -86,6 +86,9 @@ export default function CreateBook() {
                 body: data,
             });
 
+            console.log("data:", data);
+            console.log("Response:", response);
+
             if (!response.ok) throw new Error("Failed to create book");
 
             toast.success("✅ Book Created Successfully!");

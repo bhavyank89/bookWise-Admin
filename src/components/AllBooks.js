@@ -14,6 +14,8 @@ export default function AllBooks() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedAuthor, setSelectedAuthor] = useState("");
+  const [selectedBookType, setSelectedBookType] = useState("");
+  const allBookTypes = ["ebook", "both", "physical"];
   const [showModal, setShowModal] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
   const booksPerPage = 6;
@@ -27,6 +29,7 @@ export default function AllBooks() {
         if (!response.ok) throw new Error("Network error");
         const data = await response.json();
         setBooks(data.books || []);
+        console.log("Fetched books:", data.books);
       } catch (error) {
         console.error("Fetch failed:", error);
         setBooks([]);
@@ -44,10 +47,15 @@ export default function AllBooks() {
     const matchesSearch =
       (book.title || "").toLowerCase().includes(search.toLowerCase()) ||
       (book.author || "").toLowerCase().includes(search.toLowerCase()) ||
-      (book.genre || "").toLowerCase().includes(search.toLowerCase());
+      (book.genre || "").toLowerCase().includes(search.toLowerCase()) ||
+      (book.bookType || "").toLowerCase().includes(search.toLowerCase());
+    const allBookTypes = ["ebook", "both", "physical"];
     const matchesGenre = selectedGenre ? book.genre === selectedGenre : true;
     const matchesAuthor = selectedAuthor ? book.author === selectedAuthor : true;
-    return matchesSearch && matchesGenre && matchesAuthor;
+    const matchesBookType = selectedBookType
+      ? allBookTypes.includes(book.bookType) && book.bookType === selectedBookType
+      : true;
+    return matchesSearch && matchesGenre && matchesAuthor && matchesBookType;
   });
 
   const sortedBooks = [...filteredBooks].sort((a, b) => {
@@ -152,23 +160,7 @@ export default function AllBooks() {
               />
             </div>
 
-            <div className="flex flex-wrap gap-2">
-              <select
-                value={selectedGenre}
-                onChange={(e) => {
-                  setSelectedGenre(e.target.value);
-                  setCurrentPage(1);
-                }}
-                className="px-3 py-2 border rounded shadow-sm bg-white"
-              >
-                <option value="">All Genres</option>
-                {allGenres.map((genre, i) => (
-                  <option key={i} value={genre}>
-                    {genre}
-                  </option>
-                ))}
-              </select>
-
+            <div className="flex flex-wrap gap-3 items-center mb-4">
               <select
                 value={selectedAuthor}
                 onChange={(e) => {
@@ -185,14 +177,61 @@ export default function AllBooks() {
                 ))}
               </select>
 
-              <button
-                onClick={() => navigate("/createBook")}
-                className="px-4 py-2 bg-blue-700 text-white rounded flex items-center gap-2  transition-transform duration-200"
+              <select
+                value={selectedBookType}
+                onChange={(e) => {
+                  setSelectedBookType(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="px-3 py-2 border rounded shadow-sm bg-white"
               >
-                <Plus size={16} /> Create a New Book
+                <option value="">All Books</option>
+                {allBookTypes.map((bookType, i) => (
+                  <option key={i} value={bookType}>
+                    {bookType}
+                  </option>
+                ))}
+              </select>
+
+              <select
+                value={selectedGenre}
+                onChange={(e) => {
+                  setSelectedGenre(e.target.value);
+                  setCurrentPage(1);
+                }}
+                className="px-3 py-2 border rounded shadow-sm bg-white"
+              >
+                <option value="">Genre</option>
+                {allGenres.map((genre, i) => (
+                  <option key={i} value={genre}>
+                    {genre}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                onClick={() => {
+                  setSelectedAuthor("");
+                  setSelectedBookType("");
+                  setSearch("");
+                  setCurrentPage(1);
+                }}
+                className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition"
+              >
+                Clear Filters
               </button>
             </div>
+
+
+
+            <button
+              onClick={() => navigate("/createBook")}
+              className="px-4 py-2 bg-blue-700 text-white rounded flex items-center gap-2  transition-transform duration-200"
+            >
+              <Plus size={16} /> Create a New Book
+            </button>
           </div>
+
 
           {loading ? (
             <SkeletonTable />
@@ -259,44 +298,45 @@ export default function AllBooks() {
             setCurrentPage={setCurrentPage}
           />
         </div>
+      </div>
 
-        {/* Custom Delete Confirmation Modal */}
-        {showModal && (
-          <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-          >
-            <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
-              <h3 id="modal-title" className="text-lg font-semibold mb-4">
-                Confirm Deletion
-              </h3>
-              <p className="mb-6">
-                Are you sure you want to delete the book <strong>{bookToDelete?.title}</strong>?
-              </p>
-              <div className="flex justify-end gap-4">
-                <button
-                  onClick={() => {
-                    setShowModal(false);
-                    setBookToDelete(null);
-                  }}
-                  className="px-4 py-2 bg-gray-300 rounded  hover:bg-gray-400 transition"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={confirmDeleteBook}
-                  className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition "
-                >
-                  Delete
-                </button>
-              </div>
+      {/* Custom Delete Confirmation Modal */}
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-6">
+            <h3 id="modal-title" className="text-lg font-semibold mb-4">
+              Confirm Deletion
+            </h3>
+            <p className="mb-6">
+              Are you sure you want to delete the book <strong>{bookToDelete?.title}</strong>?
+            </p>
+            <div className="flex justify-end gap-4">
+              <button
+                onClick={() => {
+                  setShowModal(false);
+                  setBookToDelete(null);
+                }}
+                className="px-4 py-2 bg-gray-300 rounded  hover:bg-gray-400 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmDeleteBook}
+                className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition "
+              >
+                Delete
+              </button>
             </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
+
   );
 }
 
