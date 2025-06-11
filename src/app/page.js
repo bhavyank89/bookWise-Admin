@@ -171,7 +171,7 @@ function MainApp() {
         />
       )}
 
-      <main className={`flex-1 w-full ${!isLoginRoute && activeUser ? "md:ml-[20%] mt-16" : "mt-0"} overflow-auto max-h-screen p-4`}>
+      <main className={`flex-1 w-full ${!isLoginRoute && activeUser ? "md:ml-[20%]" : "mt-0"} overflow-auto h-full p-4`}>
         <Suspense fallback={<Loader />}>
           <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
