@@ -12,6 +12,7 @@ import {
     Pen,
     UploadCloud,
     BookCheck,
+    LogIn,
 } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -116,6 +117,15 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar }) {
                         onClick={() => handleNavigation("/bookDetails")}
                     >
                         <BookCheck size={18} /> Book Details
+                    </li>
+                    <li
+                        className={` p-2 rounded-xl flex items-center gap-2 transition-all duration-200 ease-in-out ${isActive("/bookDetails")
+                            ? "bg-[#25388C] text-white shadow-md"
+                            : "hover:bg-[#25388C] hover:text-white"
+                            }`}
+                        onClick={() => handleNavigation("/login")}
+                    >
+                        <LogIn size={18} /> Book Details
                     </li>
                 </ul>
             </nav>
