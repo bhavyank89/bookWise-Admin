@@ -2,15 +2,18 @@ import React, { useEffect, useMemo } from 'react';
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 function DashboardRecentBooks({ loading, recentBooks, SkeletonBox, setLoading, isMounted, setRecentBooks }) {
+    const navigate = useNavigate();
+
     const fallbackBooks = useMemo(() => [
         {
             title: "Inside Evil: Inside Evil Series, Book 1",
             author: "Rachel Heng",
             genre: "Strategic, Fantasy",
             requester: "Darrell Stewards",
-            createdAt: "12/01/24",
+            createdAt: "2024-12-01T00:00:00Z",
             thumbnail: "https://i.imgur.com/6pK5IQt.png",
         },
         {
@@ -18,7 +21,7 @@ function DashboardRecentBooks({ loading, recentBooks, SkeletonBox, setLoading, i
             author: "Rachel Heng",
             genre: "Strategic, Fantasy",
             requester: "Darrell Stewards",
-            createdAt: "12/01/24",
+            createdAt: "2024-12-01T00:00:00Z",
             thumbnail: "https://i.imgur.com/FkZ9ReM.png",
         },
         {
@@ -26,7 +29,7 @@ function DashboardRecentBooks({ loading, recentBooks, SkeletonBox, setLoading, i
             author: "Rachel Heng",
             genre: "Strategic, Fantasy",
             requester: "Darrell Stewards",
-            createdAt: "12/01/24",
+            createdAt: "2024-12-01T00:00:00Z",
             thumbnail: "https://i.imgur.com/XfK6xzH.png",
         },
     ], []);
@@ -68,14 +71,14 @@ function DashboardRecentBooks({ loading, recentBooks, SkeletonBox, setLoading, i
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                 <h2 className="font-bold text-lg">Recently Added Books</h2>
-                <a href="#" className="text-sm bg-[#F8F8FF] px-3 py-1 rounded text-[#25388C] hover:underline">
+                <button onClick={() => navigate('/all-books')} className="text-sm bg-[#F8F8FF] px-3 py-1 rounded text-[#25388C] hover:underline">
                     View all
-                </a>
+                </button>
             </div>
 
             {/* Add Button */}
             <div className="flex items-center gap-3 mb-4 bg-[#F8F8FF] p-2 rounded-lg hover:bg-[#E2E8F0] transition-colors">
-                <button className="flex items-center gap-2 text-sm text-black">
+                <button onClick={() => navigate('/createBook')} className="flex items-center gap-2 text-sm text-black">
                     <div className="p-2 rounded-full bg-white">
                         <Plus size={16} />
                     </div>
@@ -100,18 +103,19 @@ function DashboardRecentBooks({ loading, recentBooks, SkeletonBox, setLoading, i
                     recentBooks.map((book, idx) => (
                         <motion.div
                             key={idx}
+                            onClick={() => navigate(`/bookDetails/${book._id}`)}
                             whileHover={{ scale: 1.01 }}
-                            className="flex gap-3 hover:bg-[#F1F5F9] p-2 rounded-lg transition-colors"
+                            className="flex gap-3 hover:bg-[#F1F5F9] p-2 rounded-lg transition-colors cursor-pointer"
                         >
                             {book.thumbnailCloudinary?.secure_url ? (
                                 <img
-                                    src={book.thumbnailCloudinary?.secure_url}
+                                    src={book.thumbnailCloudinary.secure_url}
                                     className="w-14 h-20 rounded object-cover"
                                     alt={book.title}
                                 />
                             ) : (
                                 <div className="w-14 h-20 rounded bg-[#CBD5E1] flex items-center justify-center font-bold text-white text-xl">
-                                    {book.title?.[0] || "B"}
+                                    {book.title?.[0]?.toUpperCase() || "B"}
                                 </div>
                             )}
 

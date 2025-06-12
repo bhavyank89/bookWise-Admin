@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function DashboardBorrowRequest({
     loading,
@@ -10,6 +11,8 @@ function DashboardBorrowRequest({
     isMounted,
     setBorrowRequests,
 }) {
+    const navigate = useNavigate();
+
     const fallbackBooks = useMemo(() => [
         {
             title: "Inside Evil: Inside Evil Series, Book 1",
@@ -101,12 +104,12 @@ function DashboardBorrowRequest({
         <div className="w-full lg:w-1/2 bg-white shadow-md rounded-xl p-5">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                 <h2 className="font-bold text-lg">Borrow Requests</h2>
-                <a
-                    href="#"
+                <button
+                    onClick={()=>{navigate('/borrow-requests')}}
                     className="text-sm bg-[#F8F8FF] px-3 py-1 rounded text-[#25388C] hover:underline"
                 >
                     View all
-                </a>
+                </button>
             </div>
 
             <div className="flex flex-col gap-4 overflow-y-auto max-h-[400px] pr-1">

@@ -1,6 +1,7 @@
 import React, { useEffect, useCallback, useMemo } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function DashboardAccountRequest({
     loading,
@@ -10,6 +11,8 @@ function DashboardAccountRequest({
     isMounted,
     setAccountRequests,
 }) {
+    const navigate = useNavigate();
+
     const generatePlaceholderData = useCallback((user) => {
         const avatar =
             typeof user.avatar === "string"
@@ -89,12 +92,12 @@ function DashboardAccountRequest({
         <>
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-2">
                 <h2 className="font-bold text-lg">Account Requests</h2>
-                <a
-                    href="#"
+                <button
+                    onClick={() => navigate('/account-requests')}
                     className="text-sm bg-[#F8F8FF] px-3 py-1 rounded text-[#25388C] hover:underline"
                 >
                     View all
-                </a>
+                </button>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-[320px] overflow-y-auto">
