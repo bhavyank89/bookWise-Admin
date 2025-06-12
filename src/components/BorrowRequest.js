@@ -74,8 +74,6 @@ export default function BorrowRequests() {
                 const response = await fetch("http://localhost:4000/book/all-borrow-requests");
                 const result = await response.json();
 
-                console.log(result);
-
                 const mappedData = result.requests.map((req, idx) => {
                     // Determine status based on the data
                     let status = "Requested";

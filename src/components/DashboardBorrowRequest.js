@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast"; // ✅ Ensure toast is imported
+import toast from "react-hot-toast";
 
 function DashboardBorrowRequest({
     loading,
@@ -10,35 +10,32 @@ function DashboardBorrowRequest({
     isMounted,
     setBorrowRequests,
 }) {
-    const fallbackBooks = useMemo(
-        () => [
-            {
-                title: "Inside Evil: Inside Evil Series, Book 1",
-                author: "Rachel Heng",
-                genre: "Strategic, Fantasy",
-                requester: "Darrell Stewards",
-                date: "12/01/24",
-                thumbnail: "https://i.imgur.com/6pK5IQt.png",
-            },
-            {
-                title: "Jayne Castle - People in Glass Houses",
-                author: "Rachel Heng",
-                genre: "Strategic, Fantasy",
-                requester: "Darrell Stewards",
-                date: "12/01/24",
-                thumbnail: "https://i.imgur.com/FkZ9ReM.png",
-            },
-            {
-                title: "The Great Reclamation: A Novel",
-                author: "Rachel Heng",
-                genre: "Strategic, Fantasy",
-                requester: "Darrell Stewards",
-                date: "12/01/24",
-                thumbnail: "https://i.imgur.com/XfK6xzH.png",
-            },
-        ],
-        []
-    );
+    const fallbackBooks = useMemo(() => [
+        {
+            title: "Inside Evil: Inside Evil Series, Book 1",
+            author: "Rachel Heng",
+            genre: "Strategic, Fantasy",
+            requester: "Darrell Stewards",
+            date: "12/01/24",
+            thumbnail: "https://i.imgur.com/6pK5IQt.png",
+        },
+        {
+            title: "Jayne Castle - People in Glass Houses",
+            author: "Rachel Heng",
+            genre: "Strategic, Fantasy",
+            requester: "Darrell Stewards",
+            date: "12/01/24",
+            thumbnail: "https://i.imgur.com/FkZ9ReM.png",
+        },
+        {
+            title: "The Great Reclamation: A Novel",
+            author: "Rachel Heng",
+            genre: "Strategic, Fantasy",
+            requester: "Darrell Stewards",
+            date: "12/01/24",
+            thumbnail: "https://i.imgur.com/XfK6xzH.png",
+        },
+    ], []);
 
     useEffect(() => {
         isMounted.current = true;
@@ -76,8 +73,7 @@ function DashboardBorrowRequest({
                                 ? new Date(req.borrowedAt).toLocaleDateString()
                                 : "—",
                             thumbnail:
-                                req.bookThumbnailCloudinary?.secure_url ||
-                                `https://images.unsplash.com/photo-1528459105426-b9548367069b?w=600&auto=format&fit=crop&q=60`,
+                                req.bookThumbnailCloudinary?.secure_url || null,
                         };
                     });
 
@@ -102,12 +98,12 @@ function DashboardBorrowRequest({
     }, [fallbackBooks]);
 
     return (
-        <div className="w-1/2 bg-white shadow-md rounded-xl p-5">
-            <div className="flex justify-between items-center mb-4">
+        <div className="w-full lg:w-1/2 bg-white shadow-md rounded-xl p-5">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                 <h2 className="font-bold text-lg">Borrow Requests</h2>
                 <a
                     href="#"
-                    className="text-sm bg-[#F8F8FF] p-2 rounded-sm text-[#25388C] hover:underline"
+                    className="text-sm bg-[#F8F8FF] px-3 py-1 rounded text-[#25388C] hover:underline"
                 >
                     View all
                 </a>
@@ -135,7 +131,7 @@ function DashboardBorrowRequest({
                             key={idx}
                             className="flex items-start gap-3 bg-[#F8F8FF] p-3 rounded-lg transition-shadow hover:shadow-md"
                         >
-                            {req.thumbnail ? (
+                            {req.thumbnail && typeof req.thumbnail === "string" ? (
                                 <img
                                     src={req.thumbnail}
                                     className="w-14 h-20 rounded object-cover"
@@ -143,19 +139,24 @@ function DashboardBorrowRequest({
                                 />
                             ) : (
                                 <div className="w-14 h-20 rounded bg-[#CBD5E1] flex items-center justify-center font-bold text-white text-xl">
-                                    {req.title?.[0] || "B"}
+                                    {(req.title?.[0] || "B").toUpperCase()}
                                 </div>
                             )}
 
-                            <div>
-                                <h3 className="font-semibold text-sm">
-                                    {req.title}
-                                </h3>
+                            <div className="flex flex-col justify-center">
+                                <h3 className="font-semibold text-sm break-words">{req.title}</h3>
                                 <p className="text-xs text-[#64748B]">
                                     By {req.author} • {req.genre}
                                 </p>
                                 <p className="text-xs text-[#64748B] mt-1">
-                                    📚 {req.requester} • {req.date}
+                                    📚 {req.requester} •{" "}
+                                    {req.date
+                                        ? new Date(req.date).toLocaleDateString("en-US", {
+                                            year: "numeric",
+                                            month: "short",
+                                            day: "numeric",
+                                        })
+                                        : "Unknown Date"}
                                 </p>
                             </div>
                         </motion.div>

@@ -29,7 +29,6 @@ export default function AllBooks() {
         if (!response.ok) throw new Error("Network error");
         const data = await response.json();
         setBooks(data.books || []);
-        console.log("Fetched books:", data.books);
       } catch (error) {
         console.error("Fetch failed:", error);
         setBooks([]);

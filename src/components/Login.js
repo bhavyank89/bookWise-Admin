@@ -39,7 +39,6 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
             });
 
             const data = await res.json();
-            console.log(data);
 
             if (!res.ok || !data.success) {
                 throw new Error(data.error || "Invalid credentials");
@@ -53,7 +52,6 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
             })
 
             const userJson = await user.json();
-            console.log(userJson);
 
             localStorage.setItem("adminToken", data.token);
             toast.success("Login successful!");
@@ -63,7 +61,6 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
         } catch (err) {
             toast.error(err.message || "Login failed");
         } finally {
-            console.log("finnally navigated")
             setIsLoading(false);
         }
     };

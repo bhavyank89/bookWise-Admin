@@ -73,16 +73,12 @@ const AdminSignup = () => {
             form.append('role', "Admin");
             if (avatar) form.append('avatar', avatar);
 
-            console.log("form : ",form);
-
             const res = await fetch(`http://localhost:4000/auth/createUser`, {
                 method: 'POST',
                 body: form
             });
 
             const data = await res.json();
-
-            console.log("data : ",data);
 
             if (res.ok) {
                 toast.success("Account created successfully");

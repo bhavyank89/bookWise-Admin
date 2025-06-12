@@ -26,7 +26,6 @@ export default function MyComponent() {
                 const json = await res.json();
                 if (!res.ok) throw new Error(json.message || "Failed to fetch users");
                 setUsers(json.users || []);
-                console.log("Fetched users:", json.users);
             } catch (err) {
                 toast.error(err.message);
             } finally {

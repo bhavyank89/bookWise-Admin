@@ -14,11 +14,9 @@ const SkeletonBox = ({ height = "h-5", width = "w-full" }) => (
 
 function Dashboard({ activeUser }) {
     const [loading, setLoading] = useState(true);
-
     const [borrowRequests, setBorrowRequests] = useState([]);
     const [recentBooks, setRecentBooks] = useState([]);
     const [accountRequests, setAccountRequests] = useState([]);
-
     const isMounted = useRef(true);
 
     return (
@@ -39,46 +37,29 @@ function Dashboard({ activeUser }) {
             </div>
 
             {/* Metrics */}
-            <div className="flex gap-5">
-                <motion.div
-                    className="bg-white w-1/3 shadow-md rounded-xl p-5 hover:shadow-xl transition-shadow duration-300"
-                    whileHover={{ scale: 1.03 }}
-                >
-                    <h1 className="font-semibold text-sm text-[#64748B]">Total Users</h1>
-                    {loading ? (
-                        <SkeletonBox height="h-8" width="w-1/2" />
-                    ) : (
-                        <h1 className="font-bold text-2xl">{accountRequests.length}</h1>
-                    )}
-                </motion.div>
-
-                <motion.div
-                    className="bg-white w-1/3 shadow-md rounded-xl p-5 hover:shadow-xl transition-shadow duration-300"
-                    whileHover={{ scale: 1.03 }}
-                >
-                    <h1 className="font-semibold text-sm text-[#64748B]">Total Books</h1>
-                    {loading ? (
-                        <SkeletonBox height="h-8" width="w-1/2" />
-                    ) : (
-                        <h1 className="font-bold text-2xl">{recentBooks.length}</h1>
-                    )}
-                </motion.div>
-
-                <motion.div
-                    className="bg-white w-1/3 shadow-md rounded-xl p-5 hover:shadow-xl transition-shadow duration-300"
-                    whileHover={{ scale: 1.03 }}
-                >
-                    <h1 className="font-semibold text-sm text-[#64748B]">Borrow Requests</h1>
-                    {loading ? (
-                        <SkeletonBox height="h-8" width="w-1/2" />
-                    ) : (
-                        <h1 className="font-bold text-2xl">{borrowRequests.length}</h1>
-                    )}
-                </motion.div>
+            <div className="flex flex-col lg:flex-row gap-5">
+                {[ // For DRY pattern
+                    { label: "Total Users", value: accountRequests.length },
+                    { label: "Total Books", value: recentBooks.length },
+                    { label: "Borrow Requests", value: borrowRequests.length },
+                ].map((item, i) => (
+                    <motion.div
+                        key={i}
+                        className="bg-white flex-1 min-w-[200px] shadow-md rounded-xl p-5 hover:shadow-xl transition-shadow duration-300"
+                        whileHover={{ scale: 1.03 }}
+                    >
+                        <h1 className="font-semibold text-sm text-[#64748B]">{item.label}</h1>
+                        {loading ? (
+                            <SkeletonBox height="h-8" width="w-1/2" />
+                        ) : (
+                            <h1 className="font-bold text-2xl">{item.value}</h1>
+                        )}
+                    </motion.div>
+                ))}
             </div>
 
             {/* Panels */}
-            <div className="flex gap-6">
+            <div className="flex flex-col lg:flex-row gap-6">
                 <DashboardBorrowRequest
                     loading={loading}
                     borrowRequests={borrowRequests}
