@@ -50,8 +50,8 @@ const userData = {
 };
 
 function MainApp() {
-  const [isLogin, setIsLogin] = useState(false);
-  const [activeUser, setActiveUser] = useState(null);
+  const [isLogin, setIsLogin] = useState(true);
+  const [activeUser, setActiveUser] = useState(userData);
   const [showSidebar, setShowSidebar] = useState(false);
   const [collapse, setCollapse] = useState(false);
   const location = useLocation();
@@ -243,13 +243,13 @@ function MainApp() {
         <Suspense fallback={<Loader />}>
           <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<ProtectedPage><AnimatedPage><Dashboard /></AnimatedPage></ProtectedPage>} />
-              <Route path="/all-users" element={<ProtectedPage><AnimatedPage><AllUsers /></AnimatedPage></ProtectedPage>} />
+              <Route path="/" element={<ProtectedPage><AnimatedPage><Dashboard activeUser={activeUser} /></AnimatedPage></ProtectedPage>} />
+              <Route path="/all-users" element={<ProtectedPage><AnimatedPage><AllUsers activeUser={activeUser} /></AnimatedPage></ProtectedPage>} />
               <Route path="/all-books"
                 element={
                   <ProtectedPage>
                     <AnimatedPage>
-                      <AllBooks />
+                      <AllBooks activeUser={activeUser} />
                     </AnimatedPage>
                   </ProtectedPage>
                 }
@@ -259,7 +259,7 @@ function MainApp() {
                 element={
                   <ProtectedPage>
                     <AnimatedPage>
-                      <BorrowRequests />
+                      <BorrowRequests activeUser={activeUser} />
                     </AnimatedPage>
                   </ProtectedPage>
                 }
@@ -269,7 +269,7 @@ function MainApp() {
                 element={
                   <ProtectedPage>
                     <AnimatedPage>
-                      <AccountRequests />
+                      <AccountRequests activeUser={activeUser} />
                     </AnimatedPage>
                   </ProtectedPage>
                 }
@@ -279,7 +279,7 @@ function MainApp() {
                 element={
                   <ProtectedPage>
                     <AnimatedPage>
-                      <CreateBook />
+                      <CreateBook activeUser={activeUser} />
                     </AnimatedPage>
                   </ProtectedPage>
                 }
@@ -299,7 +299,7 @@ function MainApp() {
                 element={
                   <ProtectedPage>
                     <AnimatedPage>
-                      <BookDetails />
+                      <BookDetails activeUser={activeUser} />
                     </AnimatedPage>
                   </ProtectedPage>
                 }
