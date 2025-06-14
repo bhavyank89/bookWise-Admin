@@ -39,83 +39,110 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
             </button>
 
             {/* Header */}
-            <div onClick={() => handleNavigation("/")} className="mt-10 pt-2 cursor-pointer transition-all duration-300">
-                <div className={`flex items-center ${collapse ? "justify-center" : "gap-2"} transition-all duration-300`}>
-                    <BookOpen size={28} className="text-[#25388C] flex-shrink-0 transition-all duration-300" />
-                    {!collapse && (
+            {collapse ? (
+                <Tooltip.Provider delayDuration={200}>
+                    <Tooltip.Root>
+                        <Tooltip.Trigger asChild>
+                            <div
+                                onClick={() => handleNavigation("/")}
+                                className="mt-10 pt-2 cursor-pointer transition-all duration-300"
+                            >
+                                <div className="flex items-center justify-center transition-all duration-300">
+                                    <BookOpen
+                                        size={28}
+                                        className="text-[#25388C] flex-shrink-0 transition-all duration-300"
+                                    />
+                                </div>
+                                <hr className="border-t-2 border-gray-300 my-2" />
+                            </div>
+                        </Tooltip.Trigger>
+
+                        <Tooltip.Portal>
+                            <Tooltip.Content
+                                className="px-3 py-1.5 rounded-md text-sm bg-gray-900 text-white shadow-md max-w-[200px]"
+                                side="right"
+                                sideOffset={6}
+                            >
+                                BookWise
+                                <Tooltip.Arrow className="fill-gray-900" />
+                            </Tooltip.Content>
+                        </Tooltip.Portal>
+                    </Tooltip.Root>
+                </Tooltip.Provider>
+            ) : (
+                <div
+                    onClick={() => handleNavigation("/")}
+                    className="mt-10 pt-2 cursor-pointer transition-all duration-300"
+                >
+                    <div className="flex items-center gap-2 transition-all duration-300">
+                        <BookOpen
+                            size={28}
+                            className="text-[#25388C] flex-shrink-0 transition-all duration-300"
+                        />
                         <h1 className="text-3xl text-[#25388C] font-bold transition-all duration-300">
                             BookWise
                         </h1>
-                    )}
+                    </div>
+                    <hr className="border-t-2 border-gray-300 my-2" />
                 </div>
-                <hr className="border-t-2 border-gray-300 my-2" />
-            </div>
+            )}
+
 
 
             {/* Navigation Menu */}
             <nav className="overflow-y-auto flex-1">
                 <ul className="flex flex-col gap-2 text-gray-700">
-                    <li
-                        className={`cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${isActive("/")
+                    {[
+                        { label: "Home", icon: House, path: "/" },
+                        { label: "All Users", icon: Users, path: "/all-users" },
+                        { label: "All Books", icon: Book, path: "/all-books" },
+                        { label: "Borrow Requests", icon: BookMarked, path: "/borrow-requests" },
+                        { label: "Account Requests", icon: UserRound, path: "/account-requests" },
+                        { label: "Create Book", icon: Pen, path: "/createBook" },
+                    ].map(({ label, icon: Icon, path }) => {
+                        const active = isActive(path);
+                        const commonClass = `cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${active
                             ? "bg-[#25388C] text-white shadow-md"
                             : "hover:bg-[#25388C] hover:text-white"
-                            }`}
-                        onClick={() => handleNavigation("/")}
-                    >
-                        <House size={18} className="flex-shrink-0" />
-                        {!collapse && <span className="transition-all duration-300">Home</span>}
-                    </li>
-                    <li
-                        className={`cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${isActive("/all-users")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
-                            }`}
-                        onClick={() => handleNavigation("/all-users")}
-                    >
-                        <Users size={18} className="flex-shrink-0" />
-                        {!collapse && <span className="transition-all duration-300">All Users</span>}
-                    </li>
-                    <li
-                        className={`cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${isActive("/all-books")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
-                            }`}
-                        onClick={() => handleNavigation("/all-books")}
-                    >
-                        <Book size={18} className="flex-shrink-0" />
-                        {!collapse && <span className="transition-all duration-300">All Books</span>}
-                    </li>
-                    <li
-                        className={`cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${isActive("/borrow-requests")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
-                            }`}
-                        onClick={() => handleNavigation("/borrow-requests")}
-                    >
-                        <BookMarked size={18} className="flex-shrink-0" />
-                        {!collapse && <span className="transition-all duration-300">Borrow Requests</span>}
-                    </li>
-                    <li
-                        className={`cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${isActive("/account-requests")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
-                            }`}
-                        onClick={() => handleNavigation("/account-requests")}
-                    >
-                        <UserRound size={18} className="flex-shrink-0" />
-                        {!collapse && <span className="transition-all duration-300">Account Requests</span>}
-                    </li>
-                    <li
-                        className={`cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${isActive("/createBook")
-                            ? "bg-[#25388C] text-white shadow-md"
-                            : "hover:bg-[#25388C] hover:text-white"
-                            }`}
-                        onClick={() => handleNavigation("/createBook")}
-                    >
-                        <Pen size={18} className="flex-shrink-0" />
-                        {!collapse && <span className="transition-all duration-300">Create Book</span>}
-                    </li>
+                            }`;
+
+                        const content = (
+                            <li
+                                key={path}
+                                className={commonClass}
+                                onClick={() => handleNavigation(path)}
+                            >
+                                <Icon size={18} className="flex-shrink-0" />
+                                {!collapse && (
+                                    <span className="transition-all duration-300">{label}</span>
+                                )}
+                            </li>
+                        );
+
+                        // If not collapsed, just return normal content
+                        if (!collapse) return content;
+
+                        // Else wrap in tooltip
+                        return (
+                            <Tooltip.Provider key={path} delayDuration={200}>
+                                <Tooltip.Root>
+                                    <Tooltip.Trigger asChild>{content}</Tooltip.Trigger>
+                                    <Tooltip.Portal>
+                                        <Tooltip.Content
+                                            className="px-3 py-1.5 rounded-md text-sm bg-gray-900 text-white shadow-md max-w-[200px]"
+                                            side="right"
+                                            sideOffset={6}
+                                        >
+                                            {label}
+                                            <Tooltip.Arrow className="fill-gray-900" />
+                                        </Tooltip.Content>
+                                    </Tooltip.Portal>
+                                </Tooltip.Root>
+                            </Tooltip.Provider>
+                        );
+                    })}
                 </ul>
+
             </nav>
 
             {/* Profile Footer */}

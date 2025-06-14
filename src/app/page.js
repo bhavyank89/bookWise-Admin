@@ -33,21 +33,45 @@ const AnimatedPage = ({ children }) => (
 );
 
 const userData = {
-  _id: "68497655446f53423c6443da",
-  name: "envy2",
-  email: "envy2@gmail.com",
-  role: "Admin",
-  isVerified: false,
-  avatar: [],
-  books: [],
-  savedBooks: [],
-  createdAt: "2025-06-11T12:28:05.499Z",
-  updatedAt: "2025-06-11T12:28:05.499Z",
-  totalBorrowed: 0,
-  overdueCount: 0,
-  totalSavedBooks: 0,
-  id: "68497655446f53423c6443da",
-};
+  "_id": "684c8a16f7472e2d7bb45e3f",
+  "avatar": [
+    {
+      "fieldname": "avatar",
+      "originalname": "af47eede-374e-42df-9df7-0c46833e20b4.png",
+      "encoding": "7bit",
+      "mimetype": "image/png",
+      "path": "https://res.cloudinary.com/dcpnzpk4y/image/upload/v1749846545/bookwise_user_files/avatar-1749846539466.png",
+      "size": 2779629,
+      "filename": "bookwise_user_files/avatar-1749846539466"
+    }
+  ],
+  "name": "wanda",
+  "email": "wanda@gmail.com",
+  "role": "Admin",
+  "uniId": "BT23ECE066",
+  "uniIdDoc": [
+    {
+      "fieldname": "universityID",
+      "originalname": "61f97883bd9b948ae1df9fbd917ee93e.jpg",
+      "encoding": "7bit",
+      "mimetype": "image/jpeg",
+      "path": "https://res.cloudinary.com/dcpnzpk4y/image/upload/v1749846549/bookwise_user_files/universityID-1749846545530.jpg",
+      "size": 157526,
+      "filename": "bookwise_user_files/universityID-1749846545530"
+    }
+  ],
+  "isVerified": true,
+  "borrowedBooks": [],
+  "borrowHistory": [],
+  "savedBooks": [],
+  "createdAt": "2025-06-13T20:29:10.432Z",
+  "updatedAt": "2025-06-13T20:29:10.432Z",
+  "__v": 0,
+  "totalBorrowed": 0,
+  "overdueCount": 0,
+  "totalSavedBooks": 0,
+  "id": "684c8a16f7472e2d7bb45e3f"
+}
 
 function MainApp() {
   const [isLogin, setIsLogin] = useState(true);
