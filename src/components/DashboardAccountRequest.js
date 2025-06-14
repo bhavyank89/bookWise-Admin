@@ -62,7 +62,7 @@ function DashboardAccountRequest({
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await fetch("http://localhost:4000/fetchall");
+                const res = await fetch("http://localhost:4000/user/fetchall");
                 if (!res.ok) throw new Error("Failed to fetch users");
 
                 const data = await res.json();

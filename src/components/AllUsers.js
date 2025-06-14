@@ -22,7 +22,7 @@ export default function MyComponent({ activeUser }) {
         async function fetchUsers() {
             try {
                 setLoading(true);
-                const res = await fetch("http://localhost:4000/fetchall");
+                const res = await fetch("http://localhost:4000/user/fetchall");
                 const json = await res.json();
                 if (!res.ok) throw new Error(json.message || "Failed to fetch users");
                 setUsers(json.users || []);
@@ -71,7 +71,7 @@ export default function MyComponent({ activeUser }) {
         }
 
         try {
-            const res = await fetch(`/api/user/${selectedUser._id}`, { method: "DELETE" });
+            const res = await fetch(`localhost:4000/user/delete/${selectedUser._id}`, { method: "DELETE" });
             const json = await res.json();
             if (!res.ok) throw new Error(json.message || "Deletion failed");
 

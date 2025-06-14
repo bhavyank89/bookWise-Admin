@@ -46,7 +46,7 @@ function DashboardBorrowRequest({
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await fetch("http://localhost:4000/book/all-borrow-requests");
+                const res = await fetch("http://localhost:4000/book/all-requests");
                 if (!res.ok) throw new Error("Request failed");
 
                 const data = await res.json();

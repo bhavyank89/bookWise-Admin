@@ -30,7 +30,7 @@ export default function AccountRequests() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:4000/fetchall");
+                const response = await fetch("http://localhost:4000/user/fetchall");
                 const result = await response.json();
                 const usersWithPlaceholders = result.users.map(generatePlaceholderData);
                 setData(usersWithPlaceholders);
@@ -66,8 +66,8 @@ export default function AccountRequests() {
     const handleAction = async (actionType, id, item) => {
         const url =
             actionType === "verify"
-                ? "http://localhost:4000/verifyuser/verify"
-                : "http://localhost:4000/verifyuser/deverify";
+                ? "http://localhost:4000/user/verify"
+                : "http://localhost:4000/user/deverify";
 
         try {
             const response = await fetch(url, {

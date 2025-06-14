@@ -44,8 +44,8 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
                 throw new Error(data.error || "Invalid credentials");
             }
 
-            const user = await fetch(`http://localhost:4000/fetchuser`, {
-                method: 'POST',
+            const user = await fetch(`http://localhost:4000/user`, {
+                method: 'GET',
                 headers: {
                     'auth-token': data.token,
                 }

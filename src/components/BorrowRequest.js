@@ -80,7 +80,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:4000/book/all-borrow-requests");
+                const response = await fetch("http://localhost:4000/book/all-requests");
                 const result = await response.json();
 
                 const mappedData = result.requests.map((req, idx) => {
@@ -230,9 +230,10 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                                     <th className="py-3 px-4 w-1/5 font-medium">Book</th>
                                     <th className="py-3 px-4 w-1/5 font-medium">User Requested</th>
                                     <th className="py-3 px-4 w-1/10 font-medium">Status</th>
+                                    <th className="py-3 px-4 w-1/10 font-medium">Requested</th>
                                     <th className="py-3 px-4 w-1/10 font-medium">Borrowed</th>
-                                    <th className="py-3 px-4 w-1/10 font-medium">Due Date</th>
-                                    <th className="py-3 px-4 w-1/10 font-medium">Return Date</th>
+                                    <th className="py-3 px-4 w-1/10 font-medium">Due On</th>
+                                    <th className="py-3 px-4 w-1/10 font-medium">Returned</th>
                                     <th className="py-3 px-4 w-1/10 font-medium">Late Fine</th>
                                     <th className="py-3 px-4 w-1/10 font-medium text-center">Action</th>
                                 </tr>
@@ -311,9 +312,10 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                                                         {item.status}
                                                     </span>
                                                 </td>
-                                                <td className="py-4 px-4 text-gray-700">{item.borrowed}</td>
+                                                <td className="py-4 px-4 text-gray-700">{item.requestedAt}</td>
+                                                <td className="py-4 px-4 text-gray-700">{item.borrowedAt}</td>
                                                 <td className="py-4 px-4 text-gray-700">{item.dueDate}</td>
-                                                <td className="py-4 px-4 text-gray-700">{item.returnDate}</td>
+                                                <td className="py-4 px-4 text-gray-700">{item.returnedAt}</td>
                                                 <td className="py-4 px-4 text-gray-700">
                                                     {item.lateFine > 0 ? `₹${item.lateFine}` : "-"}
                                                 </td>
