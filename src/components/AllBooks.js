@@ -10,7 +10,7 @@ export default function AllBooks({ activeUser }) {
   const [search, setSearch] = useState("");
   const [books, setBooks] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [sortConfig, setSortConfig] = useState({ key: "title", direction: "asc" });
+  const [sortConfig, setSortConfig] = useState({ key: "updatedAt", direction: "desc" });
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedGenre, setSelectedGenre] = useState("");
   const [selectedAuthor, setSelectedAuthor] = useState("");

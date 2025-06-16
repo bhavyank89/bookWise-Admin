@@ -133,7 +133,7 @@ export default function CreateBook() {
             <div className="transition-all duration-300">
                 <button
                     className="text-sm flex flex-row gap-2 mb-4 p-2 rounded-md shadow-md hover:shadow-xl transition-shadow duration-300  bg-white text-[#25388C] hover:underline"
-                    onClick={() => navigate("/all-books")}
+                    onClick={() => navigate(-1)}
                 >
                     <ArrowLeft size={18} />
                     Go back

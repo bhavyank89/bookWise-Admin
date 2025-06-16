@@ -9,8 +9,8 @@ export default function MyComponent({ activeUser }) {
     const [filteredUsers, setFilteredUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
-    const [sortAsc, setSortAsc] = useState(true);
-    const [sortConfig, setSortConfig] = useState({ key: "name", direction: "asc" });
+    const [sortAsc, setSortAsc] = useState(false);
+    const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 5;
 
@@ -43,11 +43,17 @@ export default function MyComponent({ activeUser }) {
 
         if (sortConfig.key) {
             filtered.sort((a, b) => {
-                const valA = (a[sortConfig.key] || "").toString().toLowerCase();
-                const valB = (b[sortConfig.key] || "").toString().toLowerCase();
-                if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
-                if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
-                return 0;
+                if (sortConfig.key === "createdAt") {
+                    const dateA = new Date(a[sortConfig.key]);
+                    const dateB = new Date(b[sortConfig.key]);
+                    return sortConfig.direction === "asc" ? dateA - dateB : dateB - dateA;
+                } else {
+                    const valA = (a[sortConfig.key] || "").toString().toLowerCase();
+                    const valB = (b[sortConfig.key] || "").toString().toLowerCase();
+                    if (valA < valB) return sortConfig.direction === "asc" ? -1 : 1;
+                    if (valA > valB) return sortConfig.direction === "asc" ? 1 : -1;
+                    return 0;
+                }
             });
         }
 

@@ -15,7 +15,7 @@ const Skeleton = ({ height = 20, width = "100%" }) => (
 );
 
 export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
-    const [sortAsc, setSortAsc] = useState(true);
+    const [sortAsc, setSortAsc] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);

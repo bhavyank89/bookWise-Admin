@@ -179,10 +179,10 @@ export default function UpdateBook() {
 
           <div className="w-full max-w-2xl">
             <button
-              onClick={() => navigate("/all-books")}
+              onClick={() => navigate(-1)}
               className="mb-4 flex items-center gap-2 text-blue-600 hover:underline text-sm"
             >
-              <ArrowLeft size={16} /> Back to All Books
+              <ArrowLeft size={16} /> Go Back
             </button>
 
             {error && (

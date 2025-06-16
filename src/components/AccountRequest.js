@@ -6,9 +6,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import toast, { Toaster } from "react-hot-toast";
 
-export default function AccountRequests() {
+export default function AccountRequests({ activeUser }) {
     const [search, setSearch] = useState("");
-    const [sortAsc, setSortAsc] = useState(true);
+    const [sortAsc, setSortAsc] = useState(false);
     const [currentPage, setCurrentPage] = useState(1);
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState([]);
@@ -100,7 +100,7 @@ export default function AccountRequests() {
         <div className="p-6 bg-[#f5f7fd] min-h-screen">
             <Toaster position="top-right" />
             <div className="max-w-6xl mx-auto">
-                <h1 className="text-2xl font-semibold mb-1">Welcome, Adrian</h1>
+                <h1 className="text-2xl font-semibold mb-1">Welcome, {activeUser.name}</h1>
                 <p className="text-sm text-gray-500 mb-6">
                     Monitor all of your projects and tasks here
                 </p>
@@ -129,20 +129,20 @@ export default function AccountRequests() {
                     <h2 className="text-lg font-bold mb-4">Account Registration Requests</h2>
 
                     <div className="overflow-x-auto">
-                        <table className="w-full text-sm text-left">
+                        <table className="w-full table-fixed text-sm text-left border-separate border-spacing-x-3 min-w-[800px]">
                             <thead>
                                 <tr className="text-gray-600 bg-[#F8F8FF]">
-                                    <th className="py-2 pl-2 w-1/4">Name</th>
-                                    <th className="py-2 w-1/6">Date Joined</th>
-                                    <th className="py-2 w-1/5">University ID No</th>
-                                    <th className="py-2 w-1/5">University ID Card</th>
-                                    <th className="py-2 w-1/5 text-center">Actions</th>
+                                    <th className="py-2 pl-2 min-w-[180px] w-1/4">Name</th>
+                                    <th className="py-2 min-w-[130px] w-1/6">Date Joined</th>
+                                    <th className="py-2 min-w-[160px] w-1/5">University ID No</th>
+                                    <th className="py-2 min-w-[160px] w-1/5">University ID Card</th>
+                                    <th className="py-2 min-w-[160px] w-1/5 text-center">Actions</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {loading
                                     ? Array.from({ length: requestsPerPage }).map((_, i) => (
-                                        <tr key={i}>
+                                        <tr key={i} className="space-x-3">
                                             <td><Skeleton height={40} /></td>
                                             <td><Skeleton width={80} /></td>
                                             <td><Skeleton width={100} /></td>
@@ -154,8 +154,9 @@ export default function AccountRequests() {
                                         currentItems.map((item) => (
                                             <tr
                                                 key={item._id}
-                                                className="hover:bg-gray-50 transition-all duration-300"
+                                                className="hover:bg-gray-50 transition-all duration-300 space-x-3"
                                             >
+                                                {/* Name + Avatar */}
                                                 <td className="py-2 pl-2 flex items-center gap-3">
                                                     {item.avatar ? (
                                                         <img
@@ -173,8 +174,14 @@ export default function AccountRequests() {
                                                         <div className="text-xs text-gray-500">{item.email}</div>
                                                     </div>
                                                 </td>
+
+                                                {/* Date Joined */}
                                                 <td>{new Date(item.createdAt).toDateString()}</td>
+
+                                                {/* University ID */}
                                                 <td>{item.uniId}</td>
+
+                                                {/* University ID Card */}
                                                 <td>
                                                     <Tooltip.Root>
                                                         <Tooltip.Trigger asChild>
@@ -201,13 +208,15 @@ export default function AccountRequests() {
                                                         </Tooltip.Content>
                                                     </Tooltip.Root>
                                                 </td>
+
+                                                {/* Actions */}
                                                 <td className="flex justify-center gap-2">
                                                     <Dialog.Root>
                                                         <Dialog.Trigger asChild>
                                                             <button
                                                                 className={`text-xs px-3 py-1 rounded flex items-center gap-1 ${item.isVerified
-                                                                        ? "bg-red-100 text-red-700"
-                                                                        : "bg-green-100 text-green-700"
+                                                                    ? "bg-red-100 text-red-700"
+                                                                    : "bg-green-100 text-green-700"
                                                                     }`}
                                                             >
                                                                 {item.isVerified ? (
@@ -246,9 +255,7 @@ export default function AccountRequests() {
                                                                         <button
                                                                             onClick={() =>
                                                                                 handleAction(
-                                                                                    item.isVerified
-                                                                                        ? "deverify"
-                                                                                        : "verify",
+                                                                                    item.isVerified ? "deverify" : "verify",
                                                                                     item._id,
                                                                                     item
                                                                                 )
@@ -276,15 +283,16 @@ export default function AccountRequests() {
                         </table>
                     </div>
 
-                    <div className="flex justify-center mt-4 gap-2">
+                    {/* Pagination */}
+                    <div className="flex justify-center mt-4 gap-2 flex-wrap">
                         {Array.from({ length: Math.ceil(sorted.length / requestsPerPage) }).map(
                             (_, index) => (
                                 <button
                                     key={index}
                                     onClick={() => setCurrentPage(index + 1)}
                                     className={`px-4 py-2 border rounded transition-all duration-200 ${currentPage === index + 1
-                                            ? "bg-blue-600 text-white"
-                                            : "bg-white text-blue-600 hover:bg-blue-100"
+                                        ? "bg-blue-600 text-white"
+                                        : "bg-white text-blue-600 hover:bg-blue-100"
                                         }`}
                                 >
                                     {index + 1}
@@ -292,6 +300,7 @@ export default function AccountRequests() {
                             )
                         )}
                     </div>
+
                 </div>
             </div>
         </div>
