@@ -101,7 +101,7 @@ function DashboardBorrowRequest({
     }, [fallbackBooks]);
 
     return (
-        <div className="w-full lg:w-1/2 bg-white shadow-md rounded-xl p-5">
+        <div className="w-full h-full bg-white shadow-md rounded-xl p-5">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
                 <h2 className="font-bold text-lg">Borrow Requests</h2>
                 <button

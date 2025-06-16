@@ -2,10 +2,10 @@
 
 import React, { useState, useRef } from "react";
 import { motion } from "framer-motion";
-import toast from "react-hot-toast";
 import DashboardBorrowRequest from "./DashboardBorrowRequest";
 import DashboardRecentBooks from "./DashboardRecentBooks";
 import DashboardAccountRequest from "./DashboardAccountRequest";
+import DashboardBorrowHistory from "./DashboardBorrowHistory";
 
 // Skeleton UI Component
 const SkeletonBox = ({ height = "h-5", width = "w-full" }) => (
@@ -17,77 +17,141 @@ function Dashboard({ activeUser }) {
     const [borrowRequests, setBorrowRequests] = useState([]);
     const [recentBooks, setRecentBooks] = useState([]);
     const [accountRequests, setAccountRequests] = useState([]);
+    const [borrowHistory, setBorrowHistory] = useState([]);
     const isMounted = useRef(true);
 
     return (
-        <div className="p-6 flex flex-col gap-6 text-[#1E293B]">
-            {/* Header */}
-            <div>
-                <motion.h1
-                    initial={{ opacity: 0, y: -20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="font-bold text-2xl"
-                >
-                    Welcome, {activeUser?.name || "User"}
-                </motion.h1>
-                <p className="text-sm text-[#64748B]">
-                    Monitor all of your projects and tasks here
-                </p>
-            </div>
-
-            {/* Metrics */}
-            <div className="flex flex-col lg:flex-row gap-5">
-                {[ // For DRY pattern
-                    { label: "Total Users", value: accountRequests.length },
-                    { label: "Total Books", value: recentBooks.length },
-                    { label: "Borrow Requests", value: borrowRequests.length },
-                ].map((item, i) => (
-                    <motion.div
-                        key={i}
-                        className="bg-white flex-1 min-w-[200px] shadow-md rounded-xl p-5 hover:shadow-xl transition-shadow duration-300"
-                        whileHover={{ scale: 1.03 }}
+        <div className="min-h-screen w-full bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                {/* Header */}
+                <header className="mb-6 lg:mb-8">
+                    <motion.h1
+                        initial={{ opacity: 0, y: -20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5 }}
+                        className="font-bold text-2xl sm:text-3xl lg:text-4xl text-[#1E293B] mb-2"
                     >
-                        <h1 className="font-semibold text-sm text-[#64748B]">{item.label}</h1>
-                        {loading ? (
-                            <SkeletonBox height="h-8" width="w-1/2" />
-                        ) : (
-                            <h1 className="font-bold text-2xl">{item.value}</h1>
-                        )}
+                        Welcome, {activeUser?.name || "User"}
+                    </motion.h1>
+                    <p className="text-sm sm:text-base text-[#64748B]">
+                        Monitor all of your projects and tasks here.
+                    </p>
+                </header>
+
+                {/* Metrics */}
+                <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mb-8">
+                    {[
+                        {
+                            label: "Total Users",
+                            value: accountRequests.length,
+                        },
+                        {
+                            label: "Total Books",
+                            value: recentBooks.length,
+                        },
+                        {
+                            label: "Borrow Requests",
+                            value: borrowRequests.length,
+                        },
+                        {
+                            label: "Total Borrowed",
+                            value: borrowHistory.length,
+                        },
+                    ].map((item, i) => (
+                        <motion.div
+                            key={i}
+                            className="bg-white shadow-md border border-gray-100 rounded-xl p-4 sm:p-5 lg:p-6 hover:shadow-xl transition-all duration-300"
+                            whileHover={{ scale: 1.02, y: -2 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.5, delay: i * 0.1 }}
+                        >
+                            <div className="flex items-center justify-between mb-3">
+                                <h3 className="text-xs sm:text-sm font-semibold text-[#64748B] uppercase tracking-wide">
+                                    {item.label}
+                                </h3>
+                            </div>
+                            {loading ? (
+                                <SkeletonBox height="h-8 sm:h-10" width="w-1/2" />
+                            ) : (
+                                <h2 className="font-bold text-2xl sm:text-3xl lg:text-4xl text-[#1E293B]">
+                                    {item.value}
+                                </h2>
+                            )}
+                        </motion.div>
+                    ))}
+                </section>
+
+                {/* Main Grid */}
+                <section className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5 lg:gap-6 mb-8">
+                    {/* Borrow Requests */}
+                    <motion.div
+                        className="col-span-12 md:col-span-6 lg:col-span-4 bg-white border border-gray-100 shadow-md rounded-xl h-full min-h-[400px]"
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                    >
+                        <DashboardBorrowRequest
+                            loading={loading}
+                            borrowRequests={borrowRequests}
+                            SkeletonBox={SkeletonBox}
+                            setLoading={setLoading}
+                            setBorrowRequests={setBorrowRequests}
+                            isMounted={isMounted}
+                        />
                     </motion.div>
-                ))}
-            </div>
 
-            {/* Panels */}
-            <div className="flex flex-col lg:flex-row gap-6">
-                <DashboardBorrowRequest
-                    loading={loading}
-                    borrowRequests={borrowRequests}
-                    SkeletonBox={SkeletonBox}
-                    setLoading={setLoading}
-                    setBorrowRequests={setBorrowRequests}
-                    isMounted={isMounted}
-                />
-                <DashboardRecentBooks
-                    loading={loading}
-                    recentBooks={recentBooks}
-                    SkeletonBox={SkeletonBox}
-                    setLoading={setLoading}
-                    setRecentBooks={setRecentBooks}
-                    isMounted={isMounted}
-                />
-            </div>
+                    {/* Recent Books */}
+                    <motion.div
+                        className="col-span-12 md:col-span-6 lg:col-span-4 bg-white border border-gray-100 shadow-md rounded-xl h-full min-h-[400px]"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.5, delay: 0.3 }}
+                    >
+                        <DashboardRecentBooks
+                            loading={loading}
+                            recentBooks={recentBooks}
+                            SkeletonBox={SkeletonBox}
+                            setLoading={setLoading}
+                            setRecentBooks={setRecentBooks}
+                            isMounted={isMounted}
+                        />
+                    </motion.div>
 
-            {/* Account Requests */}
-            <div className="bg-white shadow-md rounded-xl p-5">
-                <DashboardAccountRequest
-                    loading={loading}
-                    accountRequests={accountRequests}
-                    SkeletonBox={SkeletonBox}
-                    setLoading={setLoading}
-                    isMounted={isMounted}
-                    setAccountRequests={setAccountRequests}
-                />
+                    {/* Borrow History */}
+                    <motion.div
+                        className="col-span-12 md:col-span-12 lg:col-span-4 bg-white border border-gray-100 shadow-md rounded-xl h-full min-h-[400px]"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.5, delay: 0.4 }}
+                    >
+                        <DashboardBorrowHistory
+                            loading={loading}
+                            setLoading={setLoading}
+                            borrowHistory={borrowHistory}
+                            setBorrowHistory={setBorrowHistory}
+                            isMounted={isMounted}
+                            SkeletonBox={SkeletonBox}
+                        />
+                    </motion.div>
+                </section>
+
+                {/* Account Requests - Full Width */}
+                <motion.section
+                    className="bg-white border border-gray-100 shadow-md rounded-xl p-4 sm:p-5 lg:p-6"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.5 }}
+                >
+                    <DashboardAccountRequest
+                        loading={loading}
+                        accountRequests={accountRequests}
+                        SkeletonBox={SkeletonBox}
+                        setLoading={setLoading}
+                        isMounted={isMounted}
+                        setAccountRequests={setAccountRequests}
+                    />
+                </motion.section>
             </div>
         </div>
     );
