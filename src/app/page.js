@@ -14,6 +14,7 @@ import LoginPage from "@/components/Login";
 import Navbar from "@/components/Navbar";
 import AdminSignup from "@/components/SignUp";
 import { AlignJustify } from "lucide-react";
+import BorrowHistory from "@/components/BorrowHistory";
 
 const Dashboard = lazy(() => import("@/components/Dashboard"));
 const AllUsers = lazy(() => import("@/components/AllUsers"));
@@ -165,6 +166,7 @@ function MainApp() {
       "/borrow-requests": "BookWise App - Borrow Requests",
       "/account-requests": "BookWise App - Account Requests",
       "/createBook": "BookWise App - Create Book",
+      "/borrowHistory": "BookWise App - Borrow History",
     };
     document.title = titles[location.pathname] || "BookWise App";
   }, [location.pathname]);
@@ -284,6 +286,16 @@ function MainApp() {
                   <ProtectedPage>
                     <AnimatedPage>
                       <BorrowRequests activeUser={activeUser} />
+                    </AnimatedPage>
+                  </ProtectedPage>
+                }
+              />
+              <Route
+                path="/borrowHistory"
+                element={
+                  <ProtectedPage>
+                    <AnimatedPage>
+                      <BorrowHistory activeUser={activeUser} />
                     </AnimatedPage>
                   </ProtectedPage>
                 }

@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { BookOpen, House, Users, BookMarked, UserRound, LogOut, Book, Pen, ChevronLeft, ChevronRight, X, } from "lucide-react";
+import { BookOpen, House, Users, BookMarked, UserRound, LogOut, Book, Pen, ChevronLeft, ChevronRight, X, History } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import * as Tooltip from "@radix-ui/react-tooltip";
 
@@ -98,7 +98,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
                         { label: "All Books", icon: Book, path: "/all-books" },
                         { label: "Borrow Requests", icon: BookMarked, path: "/borrow-requests" },
                         { label: "Account Requests", icon: UserRound, path: "/account-requests" },
-                        { label: "Create Book", icon: Pen, path: "/createBook" },
+                        { label: "Borrow History", icon: History, path: "/borrowHistory" },
                     ].map(({ label, icon: Icon, path }) => {
                         const active = isActive(path);
                         const commonClass = `cursor-pointer p-3 rounded-xl flex items-center gap-3 transition-all duration-200 ease-in-out ${active
