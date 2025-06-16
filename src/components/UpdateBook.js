@@ -13,6 +13,7 @@ export default function UpdateBook() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
+  const [bookType, setBookType] = useState("physical"); // New state for book type
   const [formData, setFormData] = useState({
     title: "",
     author: "",
@@ -42,6 +43,15 @@ export default function UpdateBook() {
         const book = data.book;
         const borrowedCount = book.count - (book.available || 0);
 
+        // Set book type based on existing data
+        let detectedBookType = "physical";
+        if (book.pdfCloudinary && book.videoCloudinary && book.count > 0) {
+          detectedBookType = "both";
+        } else if (book.pdfCloudinary || book.videoCloudinary) {
+          detectedBookType = "ebook";
+        }
+
+        setBookType(detectedBookType);
         setFormData({
           title: book.title || "",
           author: book.author || "",
@@ -88,13 +98,16 @@ export default function UpdateBook() {
 
     try {
       const { title, author, genre, summary, count, borrowedCount } = formData;
-      const newCount = parseInt(count);
-
-      if (isNaN(newCount) || newCount < 0) {
-        throw new Error("Count must be a valid positive number");
-      }
-      if (newCount < borrowedCount) {
-        throw new Error(`Cannot set count less than borrowed books (${borrowedCount})`);
+      
+      // Validation based on book type
+      if (bookType === "physical" || bookType === "both") {
+        const newCount = parseInt(count);
+        if (isNaN(newCount) || newCount < 0) {
+          throw new Error("Count must be a valid positive number");
+        }
+        if (newCount < borrowedCount) {
+          throw new Error(`Cannot set count less than borrowed books (${borrowedCount})`);
+        }
       }
 
       const updateData = new FormData();
@@ -102,10 +115,19 @@ export default function UpdateBook() {
       updateData.append("author", author);
       updateData.append("genre", genre);
       updateData.append("summary", summary);
-      updateData.append("count", newCount);
+      updateData.append("bookType", bookType);
+      
+      // Add fields based on book type
+      if (bookType === "physical" || bookType === "both") {
+        updateData.append("count", parseInt(count));
+      }
+      
       if (formData.thumbnail) updateData.append("thumbnail", formData.thumbnail);
-      if (formData.video) updateData.append("video", formData.video);
-      if (formData.pdf) updateData.append("pdf", formData.pdf);
+      
+      if (bookType === "ebook" || bookType === "both") {
+        if (formData.video) updateData.append("video", formData.video);
+        if (formData.pdf) updateData.append("pdf", formData.pdf);
+      }
 
       setLoading(true);
       const res = await fetch(`http://localhost:4000/book/update/${bookId}`, {
@@ -143,6 +165,73 @@ export default function UpdateBook() {
     } finally {
       setShowDeleteModal(false);
     }
+  };
+
+  const renderFormFields = () => {
+    return (
+      <>
+        <Input label="Title" name="title" value={formData.title} onChange={handleChange} required />
+        <Input label="Author" name="author" value={formData.author} onChange={handleChange} required />
+        <Input label="Genre" name="genre" value={formData.genre} onChange={handleChange} required />
+        <TextArea label="Summary" name="summary" value={formData.summary} onChange={handleChange} />
+        
+        {/* Book Type Selection - DISABLED */}
+        <div className="flex flex-col">
+          <label className="text-sm text-slate-700 mb-1">Book Type</label>
+          <select
+            value={bookType}
+            disabled={true}
+            className="border border-slate-300 rounded px-3 py-2 text-sm bg-gray-100 text-gray-500 cursor-not-allowed"
+          >
+            <option value="physical">Physical Book</option>
+            <option value="ebook">E-Book</option>
+            <option value="both">Both (Physical + E-Book)</option>
+          </select>
+          <p className="text-xs text-gray-500 mt-1">Book type cannot be changed during update</p>
+        </div>
+
+        {/* Conditional Count Field */}
+        {(bookType === "physical" || bookType === "both") && (
+          <Input 
+            label="Physical Book Count" 
+            name="count" 
+            type="number" 
+            min={formData.borrowedCount} 
+            value={formData.count} 
+            onChange={handleChange}
+            required
+          />
+        )}
+
+        {/* Thumbnail - Always present */}
+        <FileInput 
+          label="Thumbnail" 
+          name="thumbnail" 
+          preview={previewImage} 
+          onChange={handleChange} 
+        />
+
+        {/* Conditional PDF and Video Fields */}
+        {(bookType === "ebook" || bookType === "both") && (
+          <>
+            <FileInput 
+              label="PDF File" 
+              name="pdf" 
+              preview={previewPdf} 
+              onChange={handleChange} 
+              isPdf 
+            />
+            <FileInput 
+              label="Video Preview" 
+              name="video" 
+              preview={previewVideo} 
+              onChange={handleChange} 
+              isVideo 
+            />
+          </>
+        )}
+      </>
+    );
   };
 
   return (
@@ -196,25 +285,32 @@ export default function UpdateBook() {
             )}
 
             <form onSubmit={handleUpdate} className="bg-white rounded-lg shadow p-6 space-y-5">
-              {formData.borrowedCount > 0 && (
+              {/* Show borrowed count warning only for physical books */}
+              {(bookType === "physical" || bookType === "both") && formData.borrowedCount > 0 && (
                 <div className="bg-yellow-100 p-3 rounded text-yellow-700 text-sm">
                   <p>{formData.borrowedCount} books are currently borrowed. Total count must be at least this value.</p>
                 </div>
               )}
 
-              <Input label="Title" name="title" value={formData.title} onChange={handleChange} />
-              <Input label="Author" name="author" value={formData.author} onChange={handleChange} />
-              <Input label="Genre" name="genre" value={formData.genre} onChange={handleChange} />
-              <Input label="Count" name="count" type="number" min={formData.borrowedCount} value={formData.count} onChange={handleChange} />
-              <TextArea label="Summary" name="summary" value={formData.summary} onChange={handleChange} />
+              {/* Book Type Information */}
+              <div className="bg-blue-50 p-3 rounded text-blue-700 text-sm">
+                <p><strong>Current Book Type:</strong> {bookType === "physical" ? "Physical Book" : bookType === "ebook" ? "E-Book" : "Both (Physical + E-Book)"}</p>
+                <p className="text-xs mt-1">
+                  {bookType === "physical" && "Physical books require count and thumbnail."}
+                  {bookType === "ebook" && "E-books require PDF, video, and thumbnail."}
+                  {bookType === "both" && "Both types require count, PDF, video, and thumbnail."}
+                </p>
+              </div>
 
-              <FileInput label="Thumbnail" name="thumbnail" preview={previewImage} onChange={handleChange} />
-              <FileInput label="Video" name="video" preview={previewVideo} onChange={handleChange} isVideo />
-              <FileInput label="PDF" name="pdf" preview={previewPdf} onChange={handleChange} isPdf />
+              {renderFormFields()}
 
               <div className="flex justify-between items-center">
-                <button type="submit" className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition">
-                  Update Book
+                <button 
+                  type="submit" 
+                  className="bg-blue-700 text-white px-4 py-2 rounded hover:bg-blue-800 transition"
+                  disabled={loading}
+                >
+                  {loading ? "Updating..." : "Update Book"}
                 </button>
                 <button
                   type="button"
@@ -245,12 +341,15 @@ export default function UpdateBook() {
   );
 }
 
-function Input({ label, type = "text", ...props }) {
+function Input({ label, type = "text", required = false, ...props }) {
   return (
     <div className="flex flex-col">
-      <label className="text-sm text-slate-700 mb-1">{label}</label>
+      <label className="text-sm text-slate-700 mb-1">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
       <input
         type={type}
+        required={required}
         className="border border-slate-300 rounded px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
         {...props}
       />
