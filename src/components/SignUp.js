@@ -118,7 +118,7 @@ const AdminSignup = () => {
                             className="space-y-6"
                         >
                             <div className="space-y-4">
-                                <h1 className="text-3xl text-[#25388C] font-bold flex items-center gap-2">
+                                <h1 onClick={()=>window.location.href = 'http://localhost:3000'} className="text-3xl text-[#25388C] cursor-pointer font-bold flex items-center gap-2">
                                     <BookOpen size={28} /> BookWise
                                 </h1>
                                 <p className="text-gray-600">Create your Admin account</p>

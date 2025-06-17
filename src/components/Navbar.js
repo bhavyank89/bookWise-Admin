@@ -47,7 +47,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
                     <Tooltip.Root>
                         <Tooltip.Trigger asChild>
                             <div
-                                onClick={() => handleNavigation("/")}
+                                onClick={() => window.location.href = 'http://localhost:3000'}
                                 className="mt-10 pt-2 cursor-pointer transition-all duration-300"
                             >
                                 <div className="flex items-center justify-center transition-all duration-300">
@@ -62,7 +62,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
 
                         <Tooltip.Portal>
                             <Tooltip.Content
-                                className="px-3 py-1.5 rounded-md text-sm bg-gray-900 text-white shadow-md max-w-[200px]"
+                                className="px-3 py-1.5 rounded-md text-sm bg-gray-900 cursor-pointer text-white shadow-md max-w-[200px]"
                                 side="right"
                                 sideOffset={6}
                             >
@@ -74,10 +74,9 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
                 </Tooltip.Provider>
             ) : (
                 <div
-                    onClick={() => handleNavigation("/")}
                     className="mt-10 pt-2 cursor-pointer transition-all duration-300"
                 >
-                    <div className="flex items-center gap-2 transition-all duration-300">
+                    <div onClick={() => window.location.href = 'http://localhost:3000'} className="flex cursor-pointer items-center gap-2 transition-all duration-300">
                         <BookOpen
                             size={28}
                             className="text-[#25388C] flex-shrink-0 transition-all duration-300"

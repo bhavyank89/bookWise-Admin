@@ -111,7 +111,7 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
                                 className="space-y-4"
                             >
                                 <div className="flex items-center space-x-2">
-                                    <h1 className="text-3xl text-[#25388C] font-bold flex items-center gap-2">
+                                    <h1 onClick={()=>window.location.href = 'http://localhost:3000'} className="text-3xl cursor-pointer text-[#25388C] font-bold flex items-center gap-2">
                                         <BookOpen size={28} /> BookWise
                                     </h1>
                                 </div>
