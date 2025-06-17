@@ -31,11 +31,11 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                credentials: "include", 
+                credentials: "include",
                 body: JSON.stringify({
                     email,
                     password,
-                    role: "Admin", 
+                    role: "Admin",
                 }),
             });
 
@@ -54,12 +54,10 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
 
             const userJson = await user.json();
 
-            Cookies.set("adminToken", data.token, { expires: 7 });
             toast.success("Login successful!");
             setIsLogin(true);
             setActiveUser(userJson);
-            Cookies.set("activeUser", JSON.stringify(user), { expires: 7 });
-            Cookies.set("isLogin", "true", { expires: 7 });
+            localStorage.setItem('adminToken', data.token);
             navigate("/");
         } catch (err) {
             toast.error(err.message || "Login failed");

@@ -1,10 +1,9 @@
 "use client";
 import React, { useState, Suspense, lazy, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import "./custom-cursor.css";
-import Cookies from "js-cookie";
 
 import Loader from "@/components/Loader";
 import BorrowRequests from "@/components/BorrowRequest";
@@ -16,6 +15,7 @@ import Navbar from "@/components/Navbar";
 import AdminSignup from "@/components/SignUp";
 import { AlignJustify } from "lucide-react";
 import BorrowHistory from "@/components/BorrowHistory";
+import App from "./App";
 
 const Dashboard = lazy(() => import("@/components/Dashboard"));
 const AllUsers = lazy(() => import("@/components/AllUsers"));
@@ -34,91 +34,81 @@ const AnimatedPage = ({ children }) => (
   </motion.div>
 );
 
-const userData = {
-  "_id": "684c8a16f7472e2d7bb45e3f",
-  "avatar": [
-    {
-      "fieldname": "avatar",
-      "originalname": "af47eede-374e-42df-9df7-0c46833e20b4.png",
-      "encoding": "7bit",
-      "mimetype": "image/png",
-      "path": "https://res.cloudinary.com/dcpnzpk4y/image/upload/v1749846545/bookwise_user_files/avatar-1749846539466.png",
-      "size": 2779629,
-      "filename": "bookwise_user_files/avatar-1749846539466"
-    }
-  ],
-  "name": "wanda",
-  "email": "wanda@gmail.com",
-  "role": "Admin",
-  "uniId": "BT23ECE066",
-  "uniIdDoc": [
-    {
-      "fieldname": "universityID",
-      "originalname": "61f97883bd9b948ae1df9fbd917ee93e.jpg",
-      "encoding": "7bit",
-      "mimetype": "image/jpeg",
-      "path": "https://res.cloudinary.com/dcpnzpk4y/image/upload/v1749846549/bookwise_user_files/universityID-1749846545530.jpg",
-      "size": 157526,
-      "filename": "bookwise_user_files/universityID-1749846545530"
-    }
-  ],
-  "isVerified": true,
-  "borrowedBooks": [],
-  "borrowHistory": [],
-  "savedBooks": [],
-  "createdAt": "2025-06-13T20:29:10.432Z",
-  "updatedAt": "2025-06-13T20:29:10.432Z",
-  "__v": 0,
-  "totalBorrowed": 0,
-  "overdueCount": 0,
-  "totalSavedBooks": 0,
-  "id": "684c8a16f7472e2d7bb45e3f"
-}
-
 function MainApp() {
   const [isLogin, setIsLogin] = useState(false);
   const [activeUser, setActiveUser] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [collapse, setCollapse] = useState(false);
+  const [loading, setLoading] = useState(true);
   const location = useLocation();
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
-  useEffect(() => {
-    const cookieUser = Cookies.get("activeUser");
-    const cookieIsLogin = Cookies.get("isLogin");
+  // Enhanced fetchUser function using localStorage
+  const fetchUser = async () => {
+    try {
+      const adminToken = localStorage.getItem("adminToken");
 
-    if (cookieUser && cookieIsLogin === "true") {
-      setActiveUser(JSON.parse(cookieUser));
-      setIsLogin(true);
-    }
-
-    fetch("http://localhost:4000/user/", {
-      method: "GET",
-      credentials: "include", // ensures cookie is sent
-      headers: {
-        "auth-token" : `Bearer ${Cookies.get("token") || Cookies.get("adminToken")}`
-      }
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success && data.user) {
-          setActiveUser(data.user);
-          setIsLogin(true);
-          Cookies.set("activeUser", JSON.stringify(data.user), { expires: 7 });
-          Cookies.set("isLogin", "true", { expires: 7 });
-        } else {
-          setIsLogin(false);
-          Cookies.remove("activeUser");
-          Cookies.remove("isLogin");
-        }
-      })
-      .catch((err) => {
-        console.error("Auth check failed:", err);
+      if (!adminToken) {
+        console.warn("No token found");
         setIsLogin(false);
+        setActiveUser(null);
+        setLoading(false);
+        return { success: false, error: "No token found" };
+      }
+
+      const res = await fetch("http://localhost:4000/user", {
+        method: "GET",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          "auth-token": adminToken,
+        },
       });
+
+      const json = await res.json();
+
+      if (res.ok && json) {
+        const userData = json.user || json;
+        setActiveUser(userData);
+        setIsLogin(true);
+        return { success: true, user: userData };
+      } else {
+        console.error("Failed to fetch user:", json?.error);
+        setIsLogin(false);
+        setActiveUser(null);
+
+        // Clear invalid localStorage data
+        localStorage.removeItem("activeUser");
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("token");
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("userToken");
+
+        return { success: false, error: json?.error || "Failed to fetch user" };
+      }
+    } catch (err) {
+      console.error("Error fetching user:", err);
+      setIsLogin(false);
+      setActiveUser(null);
+      return { success: false, error: "Network error" };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initAuth = async () => {
+      const token = localStorage.getItem("adminToken");
+      if (token) {
+        await fetchUser();
+      } else {
+        setLoading(false);
+      }
+    };
+    initAuth();
   }, []);
 
-  // custom cursor + sound logic — unchanged
+  // Custom cursor + sound logic
   useEffect(() => {
     const cursor = document.querySelector(".custom-cursor");
     const snapSound = new Audio("/sound1.wav");
@@ -136,10 +126,7 @@ function MainApp() {
     document.addEventListener("click", unlockSound, { once: true });
     document.addEventListener("keydown", unlockSound, { once: true });
 
-    let mouseX = 0,
-      mouseY = 0,
-      currentX = 0,
-      currentY = 0;
+    let mouseX = 0, mouseY = 0, currentX = 0, currentY = 0;
     const lerp = (start, end, amt) => (1 - amt) * start + amt * end;
 
     const animateCursor = () => {
@@ -203,10 +190,10 @@ function MainApp() {
       "/account-requests": "BookWise App - Account Requests",
       "/createBook": "BookWise App - Create Book",
       "/borrowHistory": "BookWise App - Borrow History",
+      "/preLogin": "BookWise App - Authentication",
     };
     document.title = titles[location.pathname] || "BookWise App";
   }, [location.pathname]);
-
 
   useEffect(() => {
     const savedCollapse = localStorage.getItem("sidebarCollapse");
@@ -219,75 +206,92 @@ function MainApp() {
     localStorage.setItem("sidebarCollapse", collapse);
   }, [collapse]);
 
-  const isLoginRoute =
-    location.pathname === "/login" || location.pathname === "/signup";
-
+  const isLoginRoute = location.pathname === "/login" || location.pathname === "/signup" || location.pathname === "/preLogin";
   const closeSidebar = () => setShowSidebar(false);
 
-  const AuthPage = ({ children }) =>
-    !activeUser ? children : <Navigate to="/" replace />;
+  const AuthPage = ({ children }) => !activeUser ? children : <Navigate to="/" replace />;
 
-  const ProtectedPage = ({ children }) =>
-    activeUser ? (
-      <>
-        {/* Desktop Sidebar with Motion */}
-        <motion.div
-          initial={false}
-          animate={{
-            width: collapse ? "4.59rem" : "15rem",
-          }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className={`fixed top-0 left-0 h-screen bg-white z-40 shadow-lg hidden md:block overflow-hidden`}
-        >
-          <Navbar
-            setIsLogin={setIsLogin}
-            setActiveUser={setActiveUser}
-            activeUser={activeUser}
-            closeSidebar={closeSidebar}
-            setCollapse={setCollapse}
-            collapse={collapse}
-          />
-        </motion.div>
+  const ProtectedPage = ({ children }) => {
+    // If we're loading, show the loader
+    if (loading) {
+      return (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          background: '#F8F8FF'
+        }}>
+          <Loader />
+        </div>
+      );
+    }
 
+    // If user is authenticated, show the protected content
+    if (activeUser) {
+      return (
+        <>
+          {/* Desktop Sidebar with Motion */}
+          <motion.div
+            initial={false}
+            animate={{
+              width: collapse ? "4.59rem" : "15rem",
+            }}
+            transition={{ duration: 0.3, ease: "easeInOut" }}
+            className={`fixed top-0 left-0 h-screen bg-white z-40 shadow-lg hidden md:block overflow-hidden`}
+          >
+            <Navbar
+              setIsLogin={setIsLogin}
+              setActiveUser={setActiveUser}
+              activeUser={activeUser}
+              closeSidebar={closeSidebar}
+              setCollapse={setCollapse}
+              collapse={collapse}
+            />
+          </motion.div>
 
-        {/* Mobile Sidebar */}
-        <AnimatePresence>
-          {showSidebar && (
-            <motion.div
-              key="mobile-sidebar"
-              initial={{ x: "-100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "-100%" }}
-              transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="fixed top-0 left-0 h-screen bg-white z-50 shadow-lg md:hidden w-4/5 max-w-sm"
-            >
-              <Navbar
-                setIsLogin={setIsLogin}
-                setActiveUser={setActiveUser}
-                activeUser={activeUser}
-                closeSidebar={closeSidebar}
-                setCollapse={setCollapse}
-                collapse={false}
-              />
-            </motion.div>
-          )}
-        </AnimatePresence>
+          {/* Mobile Sidebar */}
+          <AnimatePresence>
+            {showSidebar && (
+              <motion.div
+                key="mobile-sidebar"
+                initial={{ x: "-100%" }}
+                animate={{ x: 0 }}
+                exit={{ x: "-100%" }}
+                transition={{ duration: 0.3, ease: "easeInOut" }}
+                className="fixed top-0 left-0 h-screen bg-white z-50 shadow-lg md:hidden w-4/5 max-w-sm"
+              >
+                <Navbar
+                  setIsLogin={setIsLogin}
+                  setActiveUser={setActiveUser}
+                  activeUser={activeUser}
+                  closeSidebar={closeSidebar}
+                  setCollapse={setCollapse}
+                  collapse={false}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
 
+          {children}
+        </>
+      );
+    }
 
-        {children}
-      </>
-    ) : (
-      <Navigate to="/login" replace />
-    );
+    // If not authenticated, redirect to login
+    return <Navigate to="/preLogin" replace />;
+  };
 
   return (
     <section className={`bg-[#F8F8FF] min-h-screen flex ${!isLoginRoute ? "md:flex-row" : "flex-col"} relative overflow-x-hidden`}>
-
       <div className="custom-cursor" />
 
       {/* Mobile Menu Button */}
       {!isLoginRoute && (
-        <button className="md:hidden fixed top-4 left-4 z-50 flex flex-col justify-between w-8 h-8 focus:outline-none bg-white rounded-lg p-1 shadow-md transition-all duration-300" onClick={() => setShowSidebar(!showSidebar)}>
+        <button
+          className="md:hidden fixed top-4 left-4 z-50 flex flex-col justify-between w-8 h-8 focus:outline-none bg-white rounded-lg p-1 shadow-md transition-all duration-300"
+          onClick={() => setShowSidebar(!showSidebar)}
+        >
           <AlignJustify />
         </button>
       )}
@@ -297,7 +301,9 @@ function MainApp() {
         <div
           className="fixed inset-0 bg-gray-300 bg-opacity-70 backdrop-blur-2xl z-40 md:hidden"
           onClick={closeSidebar}
-        ><AlignJustify /></div>
+        >
+          <AlignJustify />
+        </div>
       )}
 
       {/* Main Content with margin animation */}
@@ -305,9 +311,40 @@ function MainApp() {
         <Suspense fallback={<Loader />}>
           <AnimatePresence mode="wait" initial={false}>
             <Routes location={location} key={location.pathname}>
-              <Route path="/" element={<ProtectedPage><AnimatedPage><Dashboard activeUser={activeUser} /></AnimatedPage></ProtectedPage>} />
-              <Route path="/all-users" element={<ProtectedPage><AnimatedPage><AllUsers activeUser={activeUser} /></AnimatedPage></ProtectedPage>} />
-              <Route path="/all-books"
+              <Route
+                path="/preLogin"
+                element={
+                  <AnimatedPage>
+                    <App
+                      activeUser={activeUser}
+                      setActiveUser={setActiveUser}
+                      setIsLogin={setIsLogin}
+                    />
+                  </AnimatedPage>
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  <ProtectedPage>
+                    <AnimatedPage>
+                      <Dashboard activeUser={activeUser} />
+                    </AnimatedPage>
+                  </ProtectedPage>
+                }
+              />
+              <Route
+                path="/all-users"
+                element={
+                  <ProtectedPage>
+                    <AnimatedPage>
+                      <AllUsers activeUser={activeUser} />
+                    </AnimatedPage>
+                  </ProtectedPage>
+                }
+              />
+              <Route
+                path="/all-books"
                 element={
                   <ProtectedPage>
                     <AnimatedPage>

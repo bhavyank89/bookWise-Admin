@@ -17,15 +17,9 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
     };
 
     const handleLogout = async () => {
-        await fetch("http://localhost:4000/auth/logout", {
-            method: "POST",
-            credentials: "include",
-        });
-
         setIsLogin(false);
         setActiveUser(null);
-        Cookies.remove("activeUser");
-        Cookies.remove("isLogin");
+        localStorage.removeItem('adminToken');
         navigate("/login");
     };
 
