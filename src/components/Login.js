@@ -4,6 +4,7 @@ import { Eye, EyeOff, BookOpen } from 'lucide-react';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import Cookies from "js-cookie";
 
 const LoginPage = ({ setIsLogin, setActiveUser }) => {
     const [email, setEmail] = useState('');
@@ -30,11 +31,11 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                credentials: "include", // If your backend uses cookies (for JWT etc.)
+                credentials: "include", 
                 body: JSON.stringify({
                     email,
                     password,
-                    role: "Admin", // 👈 include the role
+                    role: "Admin", 
                 }),
             });
 
@@ -53,10 +54,12 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
 
             const userJson = await user.json();
 
-            localStorage.setItem("adminToken", data.token);
+            Cookies.set("adminToken", data.token, { expires: 7 });
             toast.success("Login successful!");
             setIsLogin(true);
             setActiveUser(userJson);
+            Cookies.set("activeUser", JSON.stringify(user), { expires: 7 });
+            Cookies.set("isLogin", "true", { expires: 7 });
             navigate("/");
         } catch (err) {
             toast.error(err.message || "Login failed");

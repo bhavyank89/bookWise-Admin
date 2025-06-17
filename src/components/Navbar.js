@@ -4,6 +4,7 @@ import React from "react";
 import { BookOpen, House, Users, BookMarked, UserRound, LogOut, Book, Pen, ChevronLeft, ChevronRight, X, History } from "lucide-react";
 import { useNavigate, useLocation } from "react-router-dom";
 import * as Tooltip from "@radix-ui/react-tooltip";
+import Cookies from "js-cookie";
 
 function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollapse, collapse }) {
     const navigate = useNavigate();
@@ -15,12 +16,20 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
         if (closeSidebar) closeSidebar();
     };
 
-    const handleLogout = () => {
+    const handleLogout = async () => {
+        await fetch("http://localhost:4000/auth/logout", {
+            method: "POST",
+            credentials: "include",
+        });
+
         setIsLogin(false);
         setActiveUser(null);
-        localStorage.removeItem("adminToken");
+        Cookies.remove("activeUser");
+        Cookies.remove("isLogin");
         navigate("/login");
     };
+
+
 
     const toggleCollapse = () => {
         setCollapse(!collapse);

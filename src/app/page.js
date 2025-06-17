@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate, } from "
 import { AnimatePresence, motion } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import "./custom-cursor.css";
+import Cookies from "js-cookie";
 
 import Loader from "@/components/Loader";
 import BorrowRequests from "@/components/BorrowRequest";
@@ -75,12 +76,47 @@ const userData = {
 }
 
 function MainApp() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [activeUser, setActiveUser] = useState(userData);
+  const [isLogin, setIsLogin] = useState(false);
+  const [activeUser, setActiveUser] = useState(null);
   const [showSidebar, setShowSidebar] = useState(false);
   const [collapse, setCollapse] = useState(false);
   const location = useLocation();
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const cookieUser = Cookies.get("activeUser");
+    const cookieIsLogin = Cookies.get("isLogin");
+
+    if (cookieUser && cookieIsLogin === "true") {
+      setActiveUser(JSON.parse(cookieUser));
+      setIsLogin(true);
+    }
+
+    fetch("http://localhost:4000/user/", {
+      method: "GET",
+      credentials: "include", // ensures cookie is sent
+      headers: {
+        "auth-token" : `Bearer ${Cookies.get("token") || Cookies.get("adminToken")}`
+      }
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && data.user) {
+          setActiveUser(data.user);
+          setIsLogin(true);
+          Cookies.set("activeUser", JSON.stringify(data.user), { expires: 7 });
+          Cookies.set("isLogin", "true", { expires: 7 });
+        } else {
+          setIsLogin(false);
+          Cookies.remove("activeUser");
+          Cookies.remove("isLogin");
+        }
+      })
+      .catch((err) => {
+        console.error("Auth check failed:", err);
+        setIsLogin(false);
+      });
+  }, []);
 
   // custom cursor + sound logic — unchanged
   useEffect(() => {
