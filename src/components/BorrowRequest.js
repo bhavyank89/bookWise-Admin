@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import toast, { Toaster } from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
+import PaginationControls from "./Pagination";
 
 const mockData = [
     {
@@ -79,7 +80,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
     const [actionLoading, setActionLoading] = useState({});
     const navigate = useNavigate();
 
-    const requestsPerPage = 6;
+    const requestsPerPage = 10;
 
     const fetchData = async () => {
         try {
@@ -215,7 +216,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
     const uniqueStatuses = ["All", ...new Set(data.map(item => item.status))];
 
     return (
-        <div className="p-4 sm:p-6 bg-gray-50 min-h-screen font-sans">
+        <div className="p-4 sm:p-6 mb-14 bg-gray-50 min-h-screen font-sans">
             <Toaster position="top-right" />
             <div className="max-w-7xl mx-auto">
                 <div className="mb-6">
@@ -397,11 +398,11 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                     </div>
 
                     {/* Pagination */}
-                    <Pagination
-                        totalItems={sorted.length}
-                        itemsPerPage={requestsPerPage}
+                    <PaginationControls
                         currentPage={currentPage}
-                        onPageChange={setCurrentPage}
+                        totalPages={totalPages}
+                        setCurrentPage={setCurrentPage}
+                        theme="dark"
                     />
                 </div>
             </div>
@@ -409,26 +410,3 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
     );
 
 }
-
-const Pagination = ({ totalItems, itemsPerPage, currentPage, onPageChange }) => {
-    const totalPages = Math.ceil(totalItems / itemsPerPage);
-    if (totalPages <= 1) return null;
-
-    return (
-        <div className="flex flex-wrap justify-center mt-6 gap-2">
-            {Array.from({ length: totalPages }).map((_, index) => (
-                <button
-                    key={index}
-                    onClick={() => onPageChange(index + 1)}
-                    className={`px-4 py-2 border rounded-lg shadow-sm text-sm font-medium transition ${currentPage === index + 1
-                        ? "bg-blue-600 text-white border-blue-600"
-                        : "bg-white text-blue-600 border-gray-300 hover:bg-blue-50"
-                        }`}
-                    aria-label={`Go to page ${index + 1}`}
-                >
-                    {index + 1}
-                </button>
-            ))}
-        </div>
-    );
-};

@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
-import { Pencil, Trash2, Plus, ChevronLeft, ChevronRight } from "lucide-react";
+import { Pencil, Trash2, Plus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { motion } from "framer-motion";
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import Pagination from "./Pagination";
+import DeleteBook from "./DeleteBook";
+import SkeletonTable from "./SkeletonTable";
 
 export default function AllBooks({ activeUser }) {
   const [search, setSearch] = useState("");
@@ -18,7 +20,7 @@ export default function AllBooks({ activeUser }) {
   const allBookTypes = ["ebook", "both", "physical"];
   const [showModal, setShowModal] = useState(false);
   const [bookToDelete, setBookToDelete] = useState(null);
-  const booksPerPage = 6;
+  const booksPerPage = 10;
 
   const navigate = useNavigate();
 
@@ -86,10 +88,10 @@ export default function AllBooks({ activeUser }) {
   const renderBookImageOrFallback = (book) => {
     if (book?.thumbnailCloudinary?.secure_url) {
       return <img src={book?.thumbnailCloudinary?.secure_url} alt="cover" className="w-8 h-12 sm:w-10 sm:h-14 object-cover rounded" />;
-    }else if (book?.thumbnailURL) {
+    } else if (book?.thumbnailURL) {
       return <img src={book?.thumbnailURL} alt="cover" className="w-8 h-12 sm:w-10 sm:h-14 object-cover rounded" />;
     }
-     else {
+    else {
       const fallbackText = (book?.title || "NA").substring(0, 2).toUpperCase();
       return (
         <div className="w-8 h-12 sm:w-10 sm:h-14 flex items-center justify-center bg-gray-300 text-xs sm:text-sm font-bold text-gray-700 rounded">
@@ -102,25 +104,6 @@ export default function AllBooks({ activeUser }) {
   const handleDeleteClick = (book) => {
     setBookToDelete(book);
     setShowModal(true);
-  };
-
-  const confirmDeleteBook = async () => {
-    try {
-      const response = await fetch(`http://localhost:4000/book/delete/${bookToDelete._id}`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-      });
-      if (!response.ok) throw new Error("Delete failed");
-      const result = await response.json();
-      setBooks((prev) => prev.filter((b) => b._id !== bookToDelete._id));
-      toast.success(result.message || "Book deleted!");
-    } catch (err) {
-      toast.error("Delete failed!");
-      console.error(err);
-    } finally {
-      setShowModal(false);
-      setBookToDelete(null);
-    }
   };
 
   const handleSortClick = (key) => {
@@ -139,7 +122,7 @@ export default function AllBooks({ activeUser }) {
   };
 
   return (
-    <div className="p-3 sm:p-6 min-h-screen">
+    <div className="p-3 sm:p-6 mb-14 min-h-screen">
       <ToastContainer position="top-right" autoClose={3000} />
       <div className="max-w-6xl mx-auto">
         <h1 className="text-xl sm:text-2xl font-semibold mb-1">
@@ -320,147 +303,19 @@ export default function AllBooks({ activeUser }) {
             currentPage={currentPage}
             totalPages={totalPages}
             setCurrentPage={setCurrentPage}
+            theme="dark"
           />
         </div>
       </div>
 
       {/* Delete Confirmation Modal */}
       {showModal && (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="modal-title"
-        >
-          <div className="bg-white rounded-lg shadow-lg max-w-sm w-full p-4 sm:p-6">
-            <h3 id="modal-title" className="text-base sm:text-lg font-semibold mb-4">
-              Confirm Deletion
-            </h3>
-            <p className="mb-6 text-sm sm:text-base">
-              Are you sure you want to delete the book{" "}
-              <strong>{bookToDelete?.title}</strong>?
-            </p>
-            <div className="flex justify-end gap-3 sm:gap-4">
-              <button
-                onClick={() => {
-                  setShowModal(false);
-                  setBookToDelete(null);
-                }}
-                className="px-3 sm:px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition text-sm"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={confirmDeleteBook}
-                className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
-              >
-                Delete
-              </button>
-            </div>
-          </div>
-        </div>
+        <DeleteBook setBookToDelete={setBookToDelete} bookToDelete={bookToDelete} setShowModal={setShowModal} setBooks={setBooks} />
       )}
     </div>
   );
 
 
-}
-
-function Pagination({ currentPage, totalPages, setCurrentPage }) {
-  const pageNumbers = Array.from({ length: totalPages }, (_, i) => i + 1);
-
-  return (
-    <nav
-      className="mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3"
-      aria-label="Pagination Navigation"
-    >
-      {/* Previous Button */}
-      <motion.button
-        whileHover={currentPage !== 1 ? { scale: 1.05 } : {}}
-        whileTap={currentPage !== 1 ? { scale: 0.95 } : {}}
-        disabled={currentPage === 1}
-        onClick={() => currentPage > 1 && setCurrentPage(currentPage - 1)}
-        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all backdrop-blur-md ${currentPage === 1
-          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-          : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
-          }`}
-      >
-        <ChevronLeft className="w-3 h-3 sm:w-4 sm:h-4" />
-        <span className="hidden sm:inline">Prev</span>
-      </motion.button>
-
-      {/* Page Numbers */}
-      <div className="flex gap-1 sm:gap-2">
-        {pageNumbers.map((num) => (
-          <motion.button
-            key={num}
-            whileHover={num !== currentPage ? { scale: 1.1 } : {}}
-            whileTap={num !== currentPage ? { scale: 0.95 } : {}}
-            onClick={() => setCurrentPage(num)}
-            className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full text-xs sm:text-sm font-semibold transition-all flex items-center justify-center ${currentPage === num
-              ? "bg-blue-600 text-white shadow-lg"
-              : "bg-white/80 text-gray-800 hover:bg-blue-100"
-              }`}
-          >
-            {num}
-          </motion.button>
-        ))}
-      </div>
-
-      {/* Next Button */}
-      <motion.button
-        whileHover={currentPage !== totalPages ? { scale: 1.05 } : {}}
-        whileTap={currentPage !== totalPages ? { scale: 0.95 } : {}}
-        disabled={currentPage === totalPages}
-        onClick={() =>
-          currentPage < totalPages && setCurrentPage(currentPage + 1)
-        }
-        className={`flex items-center gap-1 sm:gap-2 px-2 sm:px-4 py-2 rounded-xl text-xs sm:text-sm font-medium transition-all backdrop-blur-md ${currentPage === totalPages
-          ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-          : "bg-white/80 text-blue-600 shadow-sm hover:shadow-lg hover:ring-2 ring-blue-400"
-          }`}
-      >
-        <span className="hidden sm:inline">Next</span>
-        <ChevronRight className="w-3 h-3 sm:w-4 sm:h-4" />
-      </motion.button>
-    </nav>
-  );
-}
-
-function SkeletonTable() {
-  // Simple skeleton placeholders for loading state
-  return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-xs sm:text-sm text-left min-w-[600px] sm:min-w-[700px]">
-        <thead>
-          <tr className="bg-gray-100">
-            {Array(5)
-              .fill(0)
-              .map((_, i) => (
-                <th key={i} className="p-2 sm:p-4">
-                  <div className="h-3 sm:h-4 bg-gray-300 rounded animate-pulse"></div>
-                </th>
-              ))}
-          </tr>
-        </thead>
-        <tbody>
-          {Array(5)
-            .fill(0)
-            .map((_, i) => (
-              <tr key={i} className="border-b border-gray-200">
-                {Array(5)
-                  .fill(0)
-                  .map((_, j) => (
-                    <td key={j} className="p-2 sm:p-4">
-                      <div className="h-3 sm:h-4 bg-gray-300 rounded animate-pulse"></div>
-                    </td>
-                  ))}
-              </tr>
-            ))}
-        </tbody>
-      </table>
-    </div>
-  );
 }
 
 function NoResultsFallback({ searchTerm }) {

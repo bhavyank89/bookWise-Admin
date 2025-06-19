@@ -5,6 +5,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import * as Dialog from "@radix-ui/react-dialog";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import toast, { Toaster } from "react-hot-toast";
+import PaginationControls from "./Pagination";
 
 export default function AccountRequests({ activeUser }) {
     const [search, setSearch] = useState("");
@@ -14,7 +15,7 @@ export default function AccountRequests({ activeUser }) {
     const [data, setData] = useState([]);
     const [modalInfo, setModalInfo] = useState(null);
 
-    const requestsPerPage = 6;
+    const requestsPerPage = 10;
 
     const generatePlaceholderData = (user) => ({
         ...user,
@@ -97,7 +98,7 @@ export default function AccountRequests({ activeUser }) {
     };
 
     return (
-        <div className="p-6 bg-[#f5f7fd] min-h-screen">
+        <div className="p-6 bg-[#f5f7fd] mb-14 min-h-screen">
             <Toaster position="top-right" />
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-2xl font-semibold mb-1">Welcome, {activeUser.name}</h1>
@@ -284,22 +285,12 @@ export default function AccountRequests({ activeUser }) {
                     </div>
 
                     {/* Pagination */}
-                    <div className="flex justify-center mt-4 gap-2 flex-wrap">
-                        {Array.from({ length: Math.ceil(sorted.length / requestsPerPage) }).map(
-                            (_, index) => (
-                                <button
-                                    key={index}
-                                    onClick={() => setCurrentPage(index + 1)}
-                                    className={`px-4 py-2 border rounded transition-all duration-200 ${currentPage === index + 1
-                                        ? "bg-blue-600 text-white"
-                                        : "bg-white text-blue-600 hover:bg-blue-100"
-                                        }`}
-                                >
-                                    {index + 1}
-                                </button>
-                            )
-                        )}
-                    </div>
+                    <Pagination
+                        currentPage={currentPage}
+                        totalPages={totalPages}
+                        setCurrentPage={setCurrentPage}
+                        theme="dark"
+                    />
 
                 </div>
             </div>

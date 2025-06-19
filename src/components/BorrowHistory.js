@@ -3,7 +3,7 @@ import { ChevronDown, X, Search } from "lucide-react";
 import toast, { Toaster } from 'react-hot-toast';
 
 import Modal from '../lib/PrintModel';
-import Pagination from '../lib/Pagination';
+import Pagination from './Pagination';
 import UserSearchDropdown from "./UserSearchDropdown";
 import BorrowHistoryTable from "./BorrowHistoryTable";
 
@@ -24,7 +24,7 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [selectedBorrowData, setSelectedBorrowData] = useState(null);
 
-    const requestsPerPage = 3;
+    const requestsPerPage = 10;
 
     const fetchAllBorrowHistory = async () => {
         setLoading(true);
@@ -209,7 +209,7 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
     const uniqueStatuses = ["All", ...new Set(data.map(item => item.status))];
 
     return (
-        <div className="p-4 sm:p-6 bg-gray-50 min-h-screen font-sans">
+        <div className="p-4 sm:p-6 mb-14 bg-gray-50 min-h-screen font-sans">
             <Toaster position="top-right" />
             <div className="max-w-7xl mx-auto">
                 <div className="mb-6">
@@ -249,6 +249,7 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
                     itemsPerPage={requestsPerPage}
                     currentPage={currentPage}
                     onPageChange={setCurrentPage}
+                    theme="dark"
                 />
             </div>
 

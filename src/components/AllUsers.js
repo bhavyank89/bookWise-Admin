@@ -3,6 +3,7 @@ import toast, { Toaster } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
 import { Skeleton } from "@/components/ui/Skeleton";
 import { Trash2, ChevronDown } from "lucide-react";
+import PaginationControls from "./Pagination";
 
 export default function MyComponent({ activeUser }) {
     const [users, setUsers] = useState([]);
@@ -12,7 +13,7 @@ export default function MyComponent({ activeUser }) {
     const [sortAsc, setSortAsc] = useState(false);
     const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
     const [currentPage, setCurrentPage] = useState(1);
-    const usersPerPage = 5;
+    const usersPerPage = 10;
 
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
@@ -91,7 +92,7 @@ export default function MyComponent({ activeUser }) {
     };
 
     return (
-        <div className="p-4 sm:p-6 max-w-7xl mx-auto">
+        <div className="p-4 mb-14 sm:p-6 max-w-7xl mx-auto">
             <Toaster position="top-right" />
             <h1 className="text-2xl font-semibold mb-1">Welcome, {activeUser.name}</h1>
             <p className="text-sm text-gray-500 mb-6">Monitor all of your projects and tasks here</p>
@@ -199,22 +200,12 @@ export default function MyComponent({ activeUser }) {
                 </div>
 
                 {/* Pagination */}
-                {totalPages > 1 && (
-                    <div className="flex flex-col sm:flex-row justify-between items-center mt-6 gap-2">
-                        <p className="text-sm text-gray-500">Showing page {currentPage} of {totalPages}</p>
-                        <div className="flex flex-wrap gap-2">
-                            {[...Array(totalPages)].map((_, i) => (
-                                <button
-                                    key={i}
-                                    onClick={() => setCurrentPage(i + 1)}
-                                    className={`px-3 py-1 rounded-lg shadow-sm text-sm ${currentPage === i + 1 ? "bg-blue-600 text-white" : "bg-gray-200 hover:bg-gray-300"}`}
-                                >
-                                    {i + 1}
-                                </button>
-                            ))}
-                        </div>
-                    </div>
-                )}
+                <PaginationControls
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    setCurrentPage={setCurrentPage}
+                    theme="dark"
+                />
             </div>
 
             {/* Confirm Delete Modal */}
