@@ -1,29 +1,19 @@
 import { useState, useEffect } from "react";
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 const genres = [
-    "Fiction",
-    "Non-Fiction",
-    "Science Fiction",
-    "Fantasy",
-    "Biography",
-    "Mystery",
-    "Romance",
-    "Horror",
-    "Self-Help",
-    "Other",
+    "Fiction", "Non-Fiction", "Science Fiction", "Fantasy",
+    "Biography", "Mystery", "Romance", "Horror", "Self-Help", "Other"
 ];
 
 const MAX_FILE_SIZES = {
-    uploadThumbnail: 10 * 1024 * 1024, // 100
-    uploadPDF: 100 * 1024 * 1024, // 10MB
-    uploadVideo: 100 * 1024 * 1024, // 50MB
+    uploadThumbnail: 2 * 1024 * 1024,
+    uploadPDF: 10 * 1024 * 1024,
+    uploadVideo: 50 * 1024 * 1024,
 };
-
 
 export default function CreateBook() {
     const navigate = useNavigate();
@@ -31,21 +21,18 @@ export default function CreateBook() {
     const [modalOpen, setModalOpen] = useState(false);
     const [errors, setErrors] = useState({});
     const [formData, setFormData] = useState({
-        title: "",
-        author: "",
-        genre: "",
-        bookType: "physical",
-        count: "",
-        summary: "",
-        uploadPDF: null,
-        uploadThumbnail: null,
-        uploadVideo: null,
+        title: "", author: "", genre: "", bookType: "physical",
+        count: "", summary: "",
+        uploadPDF: null, uploadThumbnail: null, uploadVideo: null,
+        pdfURL: "", thumbnailURL: "", videoURL: ""
     });
 
-    const [preview, setPreview] = useState({
-        thumbnail: null,
-        pdf: null,
-        video: null,
+    const [preview, setPreview] = useState({ thumbnail: null, pdf: null, video: null });
+
+    const [inputMode, setInputMode] = useState({
+        thumbnail: "file",
+        pdf: "file",
+        video: "file"
     });
 
     const handleChange = (e) => {
@@ -54,14 +41,11 @@ export default function CreateBook() {
         if (files && files[0]) {
             const file = files[0];
             const maxSize = MAX_FILE_SIZES[name];
-
             if (maxSize && file.size > maxSize) {
                 setErrors((prev) => ({
                     ...prev,
-                    [name]: `File too large. Max allowed: ${maxSize / 1024 / 1024} MB`,
+                    [name]: `File too large. Max allowed: ${maxSize / 1024 / 1024} MB`
                 }));
-                // Clear preview if file is invalid
-                setPreview((prev) => ({ ...prev, [name.replace("upload", "").toLowerCase()]: null }));
                 return;
             }
 
@@ -69,13 +53,9 @@ export default function CreateBook() {
             setFormData((prev) => ({ ...prev, [name]: file }));
 
             const url = URL.createObjectURL(file);
-            if (name === "uploadThumbnail") {
-                setPreview((prev) => ({ ...prev, thumbnail: url }));
-            } else if (name === "uploadPDF") {
-                setPreview((prev) => ({ ...prev, pdf: url }));
-            } else if (name === "uploadVideo") {
-                setPreview((prev) => ({ ...prev, video: url }));
-            }
+            if (name === "uploadThumbnail") setPreview((prev) => ({ ...prev, thumbnail: url }));
+            else if (name === "uploadPDF") setPreview((prev) => ({ ...prev, pdf: url }));
+            else if (name === "uploadVideo") setPreview((prev) => ({ ...prev, video: url }));
         } else {
             setFormData((prev) => ({ ...prev, [name]: value }));
         }
@@ -84,8 +64,8 @@ export default function CreateBook() {
     const handleCreate = async (e) => {
         e.preventDefault();
         setErrors({});
-
         const data = new FormData();
+
         data.append("title", formData.title.trim());
         data.append("author", formData.author.trim());
         data.append("genre", formData.genre);
@@ -96,11 +76,30 @@ export default function CreateBook() {
             data.append("count", Number(formData.count));
         }
 
-        if (formData.uploadThumbnail) data.append("uploadThumbnail", formData.uploadThumbnail);
-        if ((formData.bookType === "ebook" || formData.bookType === "both") && formData.uploadPDF)
-            data.append("uploadPDF", formData.uploadPDF);
-        if ((formData.bookType === "ebook" || formData.bookType === "both") && formData.uploadVideo)
-            data.append("uploadVideo", formData.uploadVideo);
+        // Add thumbnail
+        if (inputMode.thumbnail === "file" && formData.uploadThumbnail) {
+            data.append("uploadThumbnail", formData.uploadThumbnail);
+        } else if (inputMode.thumbnail === "url" && formData.thumbnailURL) {
+            data.append("thumbnailURL", formData.thumbnailURL);
+        }
+
+        // Add PDF
+        if ((formData.bookType === "ebook" || formData.bookType === "both")) {
+            if (inputMode.pdf === "file" && formData.uploadPDF) {
+                data.append("uploadPDF", formData.uploadPDF);
+            } else if (inputMode.pdf === "url" && formData.pdfURL) {
+                data.append("pdfURL", formData.pdfURL);
+            }
+        }
+
+        // Add Video
+        if ((formData.bookType === "ebook" || formData.bookType === "both")) {
+            if (inputMode.video === "file" && formData.uploadVideo) {
+                data.append("uploadVideo", formData.uploadVideo);
+            } else if (inputMode.video === "url" && formData.videoURL) {
+                data.append("videoURL", formData.videoURL);
+            }
+        }
 
         try {
             setLoading(true);
@@ -110,23 +109,9 @@ export default function CreateBook() {
             });
 
             const result = await response.json();
-
             if (!response.ok) {
-                const newErrors = {};
-
-                if (result?.error?.includes("too large")) {
-                    if (result.error.toLowerCase().includes("pdf")) newErrors.uploadPDF = result.error;
-                    else if (result.error.toLowerCase().includes("thumbnail")) newErrors.uploadThumbnail = result.error;
-                    else if (result.error.toLowerCase().includes("video")) newErrors.uploadVideo = result.error;
-                    else toast.error(result.error);
-
-                    setErrors(newErrors);
-                } else if (result?.details?.length) {
-                    toast.error(result.details[0]);
-                } else {
-                    toast.error(result?.error || "Failed to create book");
-                }
-
+                if (result?.details?.length) toast.error(result.details[0]);
+                else toast.error(result?.error || "Failed to create book");
                 return;
             }
 
@@ -140,126 +125,109 @@ export default function CreateBook() {
         }
     };
 
-    const closeModalAndRedirect = () => {
-        setModalOpen(false);
-        navigate("/all-books");
+    const toggleInputMode = (field) => {
+        setInputMode((prev) => ({
+            ...prev,
+            [field]: prev[field] === "file" ? "url" : "file"
+        }));
     };
 
     useEffect(() => {
         let timer;
         if (modalOpen) {
             timer = setTimeout(() => {
-                closeModalAndRedirect();
+                setModalOpen(false);
+                navigate("/all-books");
             }, 3000);
         }
         return () => clearTimeout(timer);
     }, [modalOpen]);
 
-    const hasFileErrors = Object.values(errors).some((msg) => msg);
-
     return (
-        <div className="p-6 flex flex-col gap-6 text-[#1E293B]">
+        <div className="p-4 sm:p-6 md:p-8 max-w-5xl mx-auto w-full text-[#1E293B]">
             <Toaster position="top-right" />
-            <div>
-                <motion.h1 initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} className="font-bold text-2xl">
-                    Welcome, Adrian
+            <div className="mb-4">
+                <motion.h1
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="font-bold text-2xl"
+                >
+                    Create Book
                 </motion.h1>
-                <p className="text-sm text-[#64748B]">Monitor all of your projects and tasks here</p>
             </div>
 
-            <div className="transition-all duration-300">
-                <button
-                    className="text-sm flex flex-row gap-2 mb-4 p-2 rounded-md shadow-md hover:shadow-xl bg-white text-[#25388C] hover:underline"
-                    onClick={() => navigate(-1)}
-                >
-                    <ArrowLeft size={18} />
-                    Go back
-                </button>
+            <button
+                onClick={() => navigate(-1)}
+                className="text-sm flex gap-2 p-2 rounded bg-white shadow hover:underline text-blue-800 mb-4"
+            >
+                <ArrowLeft size={18} /> Go back
+            </button>
 
-                <form onSubmit={handleCreate} className="space-y-4">
-                    <Input label="Book Title" name="title" value={formData.title} onChange={handleChange} placeholder="Enter the book title" required disabled={loading} />
-                    <Input label="Author" name="author" value={formData.author} onChange={handleChange} placeholder="Enter the author name" required disabled={loading} />
+            <form
+                onSubmit={handleCreate}
+                className="bg-white shadow-lg rounded-xl p-6 sm:p-8 grid grid-cols-1 md:grid-cols-2 gap-6"
+            >
+                <Input label="Title" name="title" value={formData.title} onChange={handleChange} disabled={loading} required />
+                <Input label="Author" name="author" value={formData.author} onChange={handleChange} disabled={loading} required />
+                <Dropdown label="Genre" name="genre" value={formData.genre} onChange={handleChange} options={genres} disabled={loading} />
+                <Dropdown label="Book Type" name="bookType" value={formData.bookType} onChange={handleChange} options={["physical", "ebook", "both"]} disabled={loading} />
 
-                    <div className="flex flex-col">
-                        <label htmlFor="genre" className="mb-1 text-sm text-[#0F172A]">Genre</label>
-                        <select
-                            id="genre"
-                            name="genre"
-                            value={formData.genre}
-                            onChange={handleChange}
-                            className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A]"
-                            required
-                            disabled={loading}
-                        >
-                            <option value="" disabled>Select a genre</option>
-                            {genres.map((g) => (
-                                <option key={g} value={g}>{g}</option>
-                            ))}
-                        </select>
-                    </div>
+                {(formData.bookType === "physical" || formData.bookType === "both") && (
+                    <Input label="Count" name="count" type="number" value={formData.count} onChange={handleChange} min={1} disabled={loading} required />
+                )}
 
-                    <div className="flex flex-col">
-                        <label htmlFor="bookType" className="mb-1 text-sm text-[#0F172A]">Book Type</label>
-                        <select
-                            id="bookType"
-                            name="bookType"
-                            value={formData.bookType}
-                            onChange={handleChange}
-                            className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A]"
-                            required
-                            disabled={loading}
-                        >
-                            <option value="physical">Physical</option>
-                            <option value="ebook">eBook</option>
-                            <option value="both">Both</option>
-                        </select>
-                    </div>
+                <div className="col-span-2">
+                    <ToggleInputSection
+                        label="Book Thumbnail"
+                        inputMode={inputMode.thumbnail}
+                        toggle={() => toggleInputMode("thumbnail")}
+                        fileInputProps={{ name: "uploadThumbnail", onChange: handleChange, disabled: loading }}
+                        urlInputProps={{ name: "thumbnailURL", value: formData.thumbnailURL, onChange: handleChange, disabled: loading }}
+                    />
+                </div>
 
-                    {(formData.bookType === "physical" || formData.bookType === "both") && (
-                        <Input
-                            label="Total number of books"
-                            name="count"
-                            value={formData.count}
-                            onChange={handleChange}
-                            type="number"
-                            placeholder="Enter the total number of books"
-                            min={1}
-                            disabled={loading}
-                            required
-                        />
-                    )}
+                {(formData.bookType === "ebook" || formData.bookType === "both") && (
+                    <>
+                        <div className="col-span-2">
+                            <ToggleInputSection
+                                label="Upload PDF"
+                                inputMode={inputMode.pdf}
+                                toggle={() => toggleInputMode("pdf")}
+                                fileInputProps={{ name: "uploadPDF", onChange: handleChange, disabled: loading }}
+                                urlInputProps={{ name: "pdfURL", value: formData.pdfURL, onChange: handleChange, disabled: loading }}
+                            />
+                        </div>
 
-                    <Input label="Book Image" name="uploadThumbnail" type="file" onChange={handleChange} error={errors.uploadThumbnail} disabled={loading} />
-                    {preview.thumbnail && <img src={preview.thumbnail} alt="Thumbnail Preview" className="w-32 h-32 object-cover rounded shadow-md" />}
+                        <div className="col-span-2">
+                            <ToggleInputSection
+                                label="Book Video"
+                                inputMode={inputMode.video}
+                                toggle={() => toggleInputMode("video")}
+                                fileInputProps={{ name: "uploadVideo", onChange: handleChange, disabled: loading }}
+                                urlInputProps={{ name: "videoURL", value: formData.videoURL, onChange: handleChange, disabled: loading }}
+                            />
+                        </div>
+                    </>
+                )}
 
-                    {(formData.bookType === "ebook" || formData.bookType === "both") && (
-                        <>
-                            <Input label="Upload PDF" name="uploadPDF" type="file" onChange={handleChange} error={errors.uploadPDF} disabled={loading} />
-                            {preview.pdf && <iframe src={preview.pdf} className="w-full h-64 border rounded" title="PDF Preview" />}
-                        </>
-                    )}
+                <div className="col-span-2">
+                    <TextArea label="Summary" name="summary" value={formData.summary} onChange={handleChange} disabled={loading} />
+                </div>
 
-                    {(formData.bookType === "ebook" || formData.bookType === "both") && (
-                        <>
-                            <Input label="Book Video" name="uploadVideo" type="file" onChange={handleChange} error={errors.uploadVideo} disabled={loading} />
-                            {preview.video && <video src={preview.video} controls className="w-64 h-auto rounded shadow-md" />}
-                        </>
-                    )}
-
-                    <TextArea label="Book Summary" name="summary" value={formData.summary} disabled={loading} onChange={handleChange} placeholder="Write a brief summary of the book" />
-
+                <div className="col-span-2 flex flex-col gap-2">
                     <button
                         type="submit"
-                        className="w-full py-2 rounded bg-blue-800 text-white hover:bg-blue-900 transition disabled:opacity-50 disabled:cursor-not-allowed"
-                        disabled={loading || Object.values(errors).some((msg) => msg)}
+                        className="w-full py-2 rounded bg-blue-800 text-white hover:bg-blue-900 transition disabled:opacity-50"
+                        disabled={loading}
                     >
                         {loading ? "Creating..." : "Create Book"}
                     </button>
-                </form>
-            </div>
+                </div>
+            </form>
 
             {modalOpen && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex justify-center items-center z-50">
+                <motion.div className="fixed inset-0 bg-black bg-opacity-40 backdrop-blur-sm flex justify-center items-center z-50">
                     <motion.div
                         initial={{ scale: 0.8, opacity: 0 }}
                         animate={{ scale: 1, opacity: 1 }}
@@ -267,14 +235,8 @@ export default function CreateBook() {
                         className="bg-white p-6 rounded-2xl shadow-xl w-[90%] max-w-md text-center"
                     >
                         <h2 className="text-xl font-semibold text-[#1E293B] mb-2">🎉 Book Created!</h2>
-                        <p className="text-sm text-[#475569] mb-4">
-                            Your book has been successfully added to the library.
-                            <br />
-                            Redirecting to all books...
-                        </p>
-                        <button onClick={closeModalAndRedirect} className="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900">
-                            Close Now
-                        </button>
+                        <p className="text-sm text-[#475569] mb-4">Redirecting to all books...</p>
+                        <button onClick={() => navigate("/all-books")} className="px-4 py-2 bg-blue-800 text-white rounded hover:bg-blue-900">Close Now</button>
                     </motion.div>
                 </motion.div>
             )}
@@ -282,10 +244,10 @@ export default function CreateBook() {
     );
 }
 
-function Input({ label, name, value, onChange, type = "text", placeholder, error, disabled, required, min }) {
+function Input({ label, name, value, onChange, type = "text", placeholder, disabled, required, min }) {
     return (
         <div className="flex flex-col">
-            <label htmlFor={name} className="mb-1 text-sm text-[#0F172A]">{label}</label>
+            <label htmlFor={name} className="mb-1 text-sm">{label}</label>
             <input
                 type={type}
                 id={name}
@@ -296,16 +258,8 @@ function Input({ label, name, value, onChange, type = "text", placeholder, error
                 disabled={disabled}
                 required={required}
                 min={min}
-                className={`bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A] ${error ? "border-red-500" : ""}`}
-                {...(type === "file" ? {
-                    accept: name === "uploadPDF"
-                        ? "application/pdf"
-                        : name === "uploadThumbnail"
-                            ? "image/*"
-                            : "video/*"
-                } : {})}
+                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm text-[#0F172A]"
             />
-            {error && <span className="text-sm text-red-600 mt-1">{error}</span>}
         </div>
     );
 }
@@ -313,7 +267,7 @@ function Input({ label, name, value, onChange, type = "text", placeholder, error
 function TextArea({ label, name, value, onChange, placeholder, disabled }) {
     return (
         <div className="flex flex-col">
-            <label htmlFor={name} className="mb-1 text-sm text-[#0F172A]">{label}</label>
+            <label htmlFor={name} className="mb-1 text-sm">{label}</label>
             <textarea
                 id={name}
                 name={name}
@@ -322,16 +276,16 @@ function TextArea({ label, name, value, onChange, placeholder, disabled }) {
                 placeholder={placeholder}
                 disabled={disabled}
                 rows={4}
-                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A] disabled:cursor-not-allowed disabled:opacity-60"
+                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm"
             />
         </div>
     );
 }
 
-function Dropdown({ label, name, options, value, onChange, disabled }) {
+function Dropdown({ label, name, value, onChange, options, disabled }) {
     return (
         <div className="flex flex-col">
-            <label htmlFor={name} className="mb-1 text-sm text-[#0F172A]">{label}</label>
+            <label htmlFor={name} className="mb-1 text-sm">{label}</label>
             <select
                 id={name}
                 name={name}
@@ -339,13 +293,36 @@ function Dropdown({ label, name, options, value, onChange, disabled }) {
                 onChange={onChange}
                 disabled={disabled}
                 required
-                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm focus:outline-blue-500 text-[#0F172A]"
+                className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm"
             >
-                <option value="" disabled>Select {label.toLowerCase()}</option>
+                <option value="" disabled>Select {label}</option>
                 {options.map((opt) => (
                     <option key={opt} value={opt}>{opt}</option>
                 ))}
             </select>
+        </div>
+    );
+}
+
+function ToggleInputSection({ label, inputMode, toggle, fileInputProps, urlInputProps }) {
+    return (
+        <div className="flex flex-col gap-2">
+            <div className="flex items-center justify-between">
+                <label className="text-sm font-medium">{label}</label>
+                <button type="button" onClick={toggle} className="text-blue-600 text-xs underline">
+                    Switch to {inputMode === "file" ? "URL" : "File"}
+                </button>
+            </div>
+            {inputMode === "file" ? (
+                <input type="file" className="bg-white" {...fileInputProps} />
+            ) : (
+                <input
+                    type="url"
+                    className="bg-[#F9FAFB] border px-3 py-2 rounded shadow-sm"
+                    placeholder={`Paste ${label.toLowerCase()} link here`}
+                    {...urlInputProps}
+                />
+            )}
         </div>
     );
 }
