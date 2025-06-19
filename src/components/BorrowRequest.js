@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import PaginationControls from "./Pagination";
 
@@ -17,7 +17,7 @@ const mockData = [
         dueDate: "Dec 31 2023",
         lateFine: 0,
         bookThumbnail: "https://via.placeholder.com/40x60?text=Book1",
-        userAvatar: "https://i.pravatar.cc/40?u=darrell"
+        userAvatar: "https://i.pravatar.cc/40?u=darrell",
     },
     {
         id: 2,
@@ -31,7 +31,7 @@ const mockData = [
         dueDate: "Jan 12 2024",
         lateFine: 25,
         bookThumbnail: "https://via.placeholder.com/40x60?text=Book2",
-        userAvatar: "https://i.pravatar.cc/40?u=marc"
+        userAvatar: "https://i.pravatar.cc/40?u=marc",
     },
     {
         id: 3,
@@ -45,7 +45,7 @@ const mockData = [
         dueDate: "Jan 25 2023",
         lateFine: 0,
         bookThumbnail: "https://via.placeholder.com/40x60?text=Book3",
-        userAvatar: ""
+        userAvatar: "",
     },
     {
         id: 4,
@@ -59,8 +59,8 @@ const mockData = [
         dueDate: "Dec 31 2023",
         lateFine: 0,
         bookThumbnail: "https://via.placeholder.com/40x60?text=Book1",
-        userAvatar: "https://i.pravatar.cc/40?u=david"
-    }
+        userAvatar: "https://i.pravatar.cc/40?u=david",
+    },
 ];
 
 const Skeleton = ({ height = 20, width = "100%" }) => (
@@ -88,15 +88,12 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
             const result = await response.json();
 
             const mappedData = result.requests.map((req, idx) => {
-                // Determine status based on the data
                 let status = "Requested";
                 if (req.borrowed && req.returnedAt) {
-                    // Check if returned late
                     const returnDate = new Date(req.returnedAt);
                     const dueDate = new Date(req.dueDate);
                     status = returnDate > dueDate ? "Late Return" : "Returned";
                 } else if (req.borrowed) {
-                    // Check if currently overdue
                     const now = new Date();
                     const dueDate = new Date(req.dueDate);
                     status = now > dueDate ? "Overdue" : "Borrowed";
@@ -109,14 +106,22 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                     userId: req.userId || "Unknown User",
                     userName: req.userName || "Unknown User",
                     userEmail: req.userEmail || "N/A",
-                    uniId: req.uniId || `UNI${String(idx + 1).padStart(3, '0')}`,
+                    uniId: req.uniId || `UNI${String(idx + 1).padStart(3, "0")}`,
                     status: status,
-                    requested: req.requestedAt ? new Date(req.requestedAt).toLocaleDateString() : "—",
-                    borrowed: req.borrowedAt ? new Date(req.borrowedAt).toLocaleDateString() : "—",
-                    dueDate: req.dueDate ? new Date(req.dueDate).toLocaleDateString() : "—",
-                    bookThumbnail: req.bookThumbnailCloudinary?.secure_url || req.thumbnailURL || null,
+                    requested: req.requestedAt
+                        ? new Date(req.requestedAt).toLocaleDateString()
+                        : "—",
+                    borrowed: req.borrowedAt
+                        ? new Date(req.borrowedAt).toLocaleDateString()
+                        : "—",
+                    dueDate: req.dueDate
+                        ? new Date(req.dueDate).toLocaleDateString()
+                        : "—",
+                    bookThumbnail:
+                        req.bookThumbnailCloudinary?.secure_url ||
+                        req.thumbnailURL ||
+                        null,
                     userAvatar: req.userThumbnailCloudinary?.[0]?.path || "",
-                    // Store original dates for sorting
                     borrowedAtRaw: req.borrowedAt,
                     requestedAtRaw: req.requestedAt,
                     dueDateRaw: req.dueDate,
@@ -127,7 +132,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
             setData(mappedData);
         } catch (error) {
             console.error("Failed to fetch:", error);
-            setData(mockData); // fallback to mock data
+            setData(mockData); // fallback to mock
         } finally {
             setLoading(false);
         }
@@ -143,68 +148,63 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
         } else if (item.status === "Requested") {
             return { text: "Issue", action: "issue" };
         }
+        return null;
     };
 
     const handleAction = async (action, item) => {
-        console.log(action, item);
         const actionKey = `${action}-${item.id}`;
-        setActionLoading(prev => ({ ...prev, [actionKey]: true }));
+        setActionLoading((prev) => ({ ...prev, [actionKey]: true }));
 
-        const url = action === "return"
-            ? `http://localhost:4000/book/return`
-            : `http://localhost:4000/book/borrow`;
+        const url =
+            action === "return"
+                ? `http://localhost:4000/book/return`
+                : `http://localhost:4000/book/borrow`;
 
         try {
-            // Delay of 2 seconds before making the request
-            await new Promise(resolve => setTimeout(resolve, 2000));
-
+            await new Promise((resolve) => setTimeout(resolve, 2000));
             const response = await fetch(`${url}/${item.bookId}`, {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json',
+                    "Content-Type": "application/json",
                 },
-                body: JSON.stringify({
-                    user_Id: item.userId,
-                })
+                body: JSON.stringify({ user_Id: item.userId }),
             });
 
             const data = await response.json();
-
             if (!data.success) {
-                console.log("error issuing book");
-                toast.error(action === "return" ? "Failed to return book" : "Failed to issue book");
+                toast.error(
+                    action === "return" ? "Failed to return book" : "Failed to issue book"
+                );
             } else {
-                console.log(data);
-                toast.success(action === "return" ? "Book returned successfully!" : "Book issued successfully!");
-                // Refresh the table data after successful action
+                toast.success(
+                    action === "return"
+                        ? "Book returned successfully!"
+                        : "Book issued successfully!"
+                );
                 await fetchData();
             }
-        }
-        catch (error) {
-            console.log("error : ", error.message);
-            toast.error(action === "return" ? "Error returning book" : "Error issuing book");
+        } catch (error) {
+            toast.error(
+                action === "return" ? "Error returning book" : "Error issuing book"
+            );
         } finally {
-            setActionLoading(prev => ({ ...prev, [actionKey]: false }));
+            setActionLoading((prev) => ({ ...prev, [actionKey]: false }));
         }
-    }
-
+    };
 
     const filtered = data.filter((item) => {
         const term = search.toLowerCase();
-        const matchesSearch = (
+        const matchesSearch =
             item.bookTitle.toLowerCase().includes(term) ||
             item.userName.toLowerCase().includes(term) ||
             item.userEmail.toLowerCase().includes(term) ||
-            item.uniId.toLowerCase().includes(term)
-        );
+            item.uniId.toLowerCase().includes(term);
 
         const matchesStatus = statusFilter === "All" || item.status === statusFilter;
-
         return matchesSearch && matchesStatus;
     });
 
     const sorted = [...filtered].sort((a, b) => {
-        // Use the requested date for sorting, fallback to current date if not available
         const dateA = new Date(a.requestedAtRaw || new Date());
         const dateB = new Date(b.requestedAtRaw || new Date());
         return sortAsc ? dateA - dateB : dateB - dateA;
@@ -212,8 +212,8 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
 
     const indexOfLast = currentPage * requestsPerPage;
     const currentItems = sorted.slice(indexOfLast - requestsPerPage, indexOfLast);
-
-    const uniqueStatuses = ["All", ...new Set(data.map(item => item.status))];
+    const totalPages = Math.ceil(sorted.length / requestsPerPage);
+    const uniqueStatuses = ["All", ...new Set(data.map((item) => item.status))];
 
     return (
         <div className="p-4 sm:p-6 mb-14 bg-gray-50 min-h-screen font-sans">
@@ -223,7 +223,9 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                     <h1 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-1">
                         Welcome, {activeUser.name}
                     </h1>
-                    <p className="text-sm text-gray-500">Monitor all of your projects and tasks here</p>
+                    <p className="text-sm text-gray-500">
+                        Monitor all of your projects and tasks here
+                    </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4 flex-wrap">
@@ -236,7 +238,6 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                             setSearch(e.target.value);
                             setCurrentPage(1);
                         }}
-                        aria-label="Search"
                     />
                     <div className="flex gap-2 flex-wrap">
                         <select
@@ -246,7 +247,6 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                                 setCurrentPage(1);
                             }}
                             className="px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
-                            aria-label="Filter by status"
                         >
                             {uniqueStatuses.map((status) => (
                                 <option key={status} value={status}>
@@ -257,7 +257,6 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                         <button
                             onClick={() => setSortAsc(!sortAsc)}
                             className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg shadow-sm hover:bg-gray-100 transition text-sm"
-                            aria-label="Sort by requested date"
                         >
                             {sortAsc ? "Oldest to Recent" : "Recent to Oldest"}
                             <ChevronDown size={16} />
@@ -397,7 +396,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                         </table>
                     </div>
 
-                    {/* Pagination */}
+                    {/* ✅ PAGINATION FIXED */}
                     <PaginationControls
                         currentPage={currentPage}
                         totalPages={totalPages}
@@ -408,5 +407,4 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
             </div>
         </div>
     );
-
 }

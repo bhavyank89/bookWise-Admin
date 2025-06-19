@@ -63,6 +63,7 @@ export default function AccountRequests({ activeUser }) {
 
     const indexOfLast = currentPage * requestsPerPage;
     const currentItems = sorted.slice(indexOfLast - requestsPerPage, indexOfLast);
+    const totalPages = Math.ceil(sorted.length / requestsPerPage);
 
     const handleAction = async (actionType, id, item) => {
         const url =
@@ -157,7 +158,6 @@ export default function AccountRequests({ activeUser }) {
                                                 key={item._id}
                                                 className="hover:bg-gray-50 transition-all duration-300 space-x-3"
                                             >
-                                                {/* Name + Avatar */}
                                                 <td className="py-2 pl-2 flex items-center gap-3">
                                                     {item.avatar ? (
                                                         <img
@@ -175,14 +175,8 @@ export default function AccountRequests({ activeUser }) {
                                                         <div className="text-xs text-gray-500">{item.email}</div>
                                                     </div>
                                                 </td>
-
-                                                {/* Date Joined */}
                                                 <td>{new Date(item.createdAt).toDateString()}</td>
-
-                                                {/* University ID */}
                                                 <td>{item.uniId}</td>
-
-                                                {/* University ID Card */}
                                                 <td>
                                                     <Tooltip.Root>
                                                         <Tooltip.Trigger asChild>
@@ -209,15 +203,13 @@ export default function AccountRequests({ activeUser }) {
                                                         </Tooltip.Content>
                                                     </Tooltip.Root>
                                                 </td>
-
-                                                {/* Actions */}
                                                 <td className="flex justify-center gap-2">
                                                     <Dialog.Root>
                                                         <Dialog.Trigger asChild>
                                                             <button
                                                                 className={`text-xs px-3 py-1 rounded flex items-center gap-1 ${item.isVerified
-                                                                    ? "bg-red-100 text-red-700"
-                                                                    : "bg-green-100 text-green-700"
+                                                                        ? "bg-red-100 text-red-700"
+                                                                        : "bg-green-100 text-green-700"
                                                                     }`}
                                                             >
                                                                 {item.isVerified ? (
@@ -284,14 +276,13 @@ export default function AccountRequests({ activeUser }) {
                         </table>
                     </div>
 
-                    {/* Pagination */}
-                    <Pagination
+                    {/* ✅ Pagination Controls */}
+                    <PaginationControls
                         currentPage={currentPage}
                         totalPages={totalPages}
                         setCurrentPage={setCurrentPage}
                         theme="dark"
                     />
-
                 </div>
             </div>
         </div>
