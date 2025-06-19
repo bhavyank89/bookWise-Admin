@@ -13,7 +13,7 @@ function DashboardBorrowHistory({
 }) {
     const navigate = useNavigate();
 
-    // Fallback history shown on error
+    // ✅ Memoized fallback in case fetch fails
     const fallbackHistory = useMemo(
         () => [
             {
@@ -57,7 +57,6 @@ function DashboardBorrowHistory({
                 if (!res.ok) throw new Error("Request failed");
 
                 const { data } = await res.json();
-
                 if (isMounted.current && data) {
                     const mapped = data.map((item, idx) => {
                         let status = "Requested";
@@ -80,12 +79,16 @@ function DashboardBorrowHistory({
                             author: item.bookAuthor || "Unknown",
                             user: item.userName || "Unknown User",
                             date: item.borrowedAt || item.requestedAt || item.returnedAt,
-                            thumbnail: item.bookThumbnailCloudinary?.secure_url || null,
+                            thumbnail:
+                                item.bookThumbnailCloudinary?.secure_url ||
+                                item.bookThumbnailCloudinary || // sometimes this may be a string
+                                item.thumbnailURL ||
+                                null,
                             status,
                         };
                     });
 
-                    setBorrowHistory(mapped.slice(0, 5)); // Show only 5 recent
+                    setBorrowHistory(mapped.slice(0, 5)); // Only 5 recent
                 }
             } catch (err) {
                 console.error("Borrow history fetch failed:", err);
@@ -147,10 +150,10 @@ function DashboardBorrowHistory({
                             )}
 
                             <div className="flex flex-col justify-center">
-                                <h3 className="font-semibold text-sm break-words">{entry.title}</h3>
-                                <p className="text-xs text-[#64748B]">
-                                    By {entry.author}
-                                </p>
+                                <h3 className="font-semibold text-sm break-words">
+                                    {entry.title}
+                                </h3>
+                                <p className="text-xs text-[#64748B]">By {entry.author}</p>
                                 <p className="text-xs text-[#64748B] mt-1">
                                     👤 {entry.user} •{" "}
                                     {entry.date

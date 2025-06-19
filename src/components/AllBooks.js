@@ -86,7 +86,10 @@ export default function AllBooks({ activeUser }) {
   const renderBookImageOrFallback = (book) => {
     if (book?.thumbnailCloudinary?.secure_url) {
       return <img src={book?.thumbnailCloudinary?.secure_url} alt="cover" className="w-8 h-12 sm:w-10 sm:h-14 object-cover rounded" />;
-    } else {
+    }else if (book?.thumbnailURL) {
+      return <img src={book?.thumbnailURL} alt="cover" className="w-8 h-12 sm:w-10 sm:h-14 object-cover rounded" />;
+    }
+     else {
       const fallbackText = (book?.title || "NA").substring(0, 2).toUpperCase();
       return (
         <div className="w-8 h-12 sm:w-10 sm:h-14 flex items-center justify-center bg-gray-300 text-xs sm:text-sm font-bold text-gray-700 rounded">

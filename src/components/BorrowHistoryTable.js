@@ -47,9 +47,9 @@ function BorrowHistoryTable({
                                 >
                                     <td className="py-4 px-4">
                                         <div className="flex items-center gap-3">
-                                            {item?.bookThumbnail ? (
+                                            {item?.bookThumbnail || item?.thumbnailURL ? (
                                                 <img
-                                                    src={item.bookThumbnail}
+                                                    src={item.bookThumbnail || item.thumbnailURL}
                                                     alt="Book cover"
                                                     className="w-10 h-14 object-cover rounded shadow"
                                                 />

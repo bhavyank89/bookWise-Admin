@@ -76,7 +76,7 @@ function DashboardBorrowRequest({
                                 ? new Date(req.borrowedAt).toLocaleDateString()
                                 : "—",
                             thumbnail:
-                                req.bookThumbnailCloudinary?.secure_url || null,
+                                req.bookThumbnailCloudinary?.secure_url || req.thumbnailURL || null,
                         };
                     });
 

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 import toast, { Toaster } from 'react-hot-toast';
+import { useNavigate } from "react-router-dom";
 
 const mockData = [
     {
@@ -76,6 +77,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
     const [data, setData] = useState([]);
     const [statusFilter, setStatusFilter] = useState("All");
     const [actionLoading, setActionLoading] = useState({});
+    const navigate = useNavigate();
 
     const requestsPerPage = 6;
 
@@ -111,7 +113,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                     requested: req.requestedAt ? new Date(req.requestedAt).toLocaleDateString() : "—",
                     borrowed: req.borrowedAt ? new Date(req.borrowedAt).toLocaleDateString() : "—",
                     dueDate: req.dueDate ? new Date(req.dueDate).toLocaleDateString() : "—",
-                    bookThumbnail: req.bookThumbnailCloudinary?.secure_url || null,
+                    bookThumbnail: req.bookThumbnailCloudinary?.secure_url || req.thumbnailURL || null,
                     userAvatar: req.userThumbnailCloudinary?.[0]?.path || "",
                     // Store original dates for sorting
                     borrowedAtRaw: req.borrowedAt,
@@ -303,7 +305,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                                                 key={item.id}
                                                 className="hover:bg-gray-50 transition-all duration-200 border-b"
                                             >
-                                                <td className="py-4 px-4">
+                                                <td onClick={() => { navigate(`/bookdetails/${item.bookId}`) }} className="py-4 px-4">
                                                     <div className="flex items-center gap-3">
                                                         {item?.bookThumbnail ? (<img
                                                             src={item.bookThumbnail}

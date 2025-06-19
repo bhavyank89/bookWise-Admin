@@ -35,9 +35,18 @@ const BookDetails = () => {
     };
 
     const handleViewPDF = () => {
-        if (bookData?.pdfCloudinary?.secure_url) window.open(bookData.pdfCloudinary.secure_url, '_blank', 'noopener,noreferrer');
-        else toast.warning('No PDF available for this book.');
+        const pdfLink =
+            bookData?.pdfCloudinary?.secure_url ||
+            bookData?.pdfURL ||
+            bookData?.pdf;
+
+        if (pdfLink) {
+            window.open(pdfLink, '_blank', 'noopener,noreferrer');
+        } else {
+            toast.warning('No PDF available for this book.');
+        }
     };
+
 
     const handleDelete = async () => {
         try {
@@ -60,10 +69,10 @@ const BookDetails = () => {
                             <div className="h-8 bg-gradient-to-r from-slate-200 to-slate-300 rounded-xl w-1/3" />
                             <div className="h-4 bg-slate-200 rounded-lg w-1/2" />
                         </div>
-                        
+
                         {/* Back button skeleton */}
                         <div className="h-10 w-24 bg-slate-200 rounded-lg" />
-                        
+
                         {/* Main content skeleton */}
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                             <div className="lg:col-span-1">
@@ -102,17 +111,17 @@ const BookDetails = () => {
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
-            <motion.div 
-                className="container mx-auto px-6 py-8" 
-                initial={{ opacity: 0, y: 20 }} 
-                animate={{ opacity: 1, y: 0 }} 
+            <motion.div
+                className="container mx-auto px-6 py-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, ease: "easeOut" }}
             >
                 {/* Modern Header */}
-                <motion.div 
+                <motion.div
                     className="mb-8"
-                    initial={{ opacity: 0, y: -20 }} 
-                    animate={{ opacity: 1, y: 0 }} 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.1 }}
                 >
                     <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-transparent mb-2">
@@ -122,8 +131,8 @@ const BookDetails = () => {
                 </motion.div>
 
                 {/* Modern Back Button */}
-                <motion.button 
-                    onClick={handleGoBack} 
+                <motion.button
+                    onClick={handleGoBack}
                     className="group flex items-center gap-2 mb-8 px-4 py-2 rounded-xl bg-white/70 backdrop-blur-sm border border-slate-200/50 hover:bg-white hover:shadow-lg hover:shadow-slate-200/50 transition-all duration-300"
                     whileHover={{ x: -4 }}
                     whileTap={{ scale: 0.95 }}
@@ -135,28 +144,33 @@ const BookDetails = () => {
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
                     {/* Book Cover */}
-                    <motion.div 
+                    <motion.div
                         className="lg:col-span-1"
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ duration: 0.5, delay: 0.2 }}
                     >
-                        <motion.div 
+                        <motion.div
                             className="aspect-[3/4] rounded-2xl overflow-hidden shadow-2xl shadow-slate-900/20 bg-gradient-to-br from-slate-100 to-slate-200"
                             whileHover={{ scale: 1.02, rotateY: 5 }}
                             transition={{ duration: 0.3 }}
                         >
                             <img
-                                src={bookData.thumbnailCloudinary?.secure_url || bookData.thumbnail}
+                                src={
+                                    bookData.thumbnailCloudinary?.secure_url ||
+                                    bookData.thumbnailURL ||
+                                    bookData.thumbnail
+                                }
                                 alt={bookData.title}
                                 title="Book Thumbnail Preview"
                                 className="w-full h-full object-cover"
                             />
+
                         </motion.div>
                     </motion.div>
 
                     {/* Book Info */}
-                    <motion.div 
+                    <motion.div
                         className="lg:col-span-2 space-y-6"
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
@@ -165,7 +179,7 @@ const BookDetails = () => {
                         {/* Title and Meta */}
                         <div className="space-y-4">
                             <h2 className="text-3xl font-bold text-slate-800 leading-tight">{bookData.title}</h2>
-                            
+
                             <div className="flex flex-wrap gap-4 text-slate-600">
                                 <div className="flex items-center gap-2">
                                     <User className="w-4 h-4" />
@@ -180,7 +194,7 @@ const BookDetails = () => {
 
                         {/* Action Buttons */}
                         <div className="flex flex-wrap gap-3">
-                            <motion.button 
+                            <motion.button
                                 onClick={toggleEdit}
                                 className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/30 transition-all duration-300"
                                 whileHover={{ scale: 1.02 }}
@@ -202,7 +216,7 @@ const BookDetails = () => {
                                 </motion.button>
                             )}
 
-                            <motion.button 
+                            <motion.button
                                 onClick={() => setShowDeleteModal(true)}
                                 className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 transition-all duration-300"
                                 whileHover={{ scale: 1.02 }}
@@ -216,14 +230,14 @@ const BookDetails = () => {
                 </div>
 
                 {/* Content Cards */}
-                <motion.div 
+                <motion.div
                     className="grid grid-cols-1 lg:grid-cols-2 gap-8"
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: 0.4 }}
                 >
                     {/* Summary Card */}
-                    <motion.div 
+                    <motion.div
                         className="group p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-200/50 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/30 transition-all duration-300"
                         whileHover={{ y: -4 }}
                     >
@@ -235,7 +249,7 @@ const BookDetails = () => {
                     </motion.div>
 
                     {/* Video Card */}
-                    <motion.div 
+                    <motion.div
                         className="group p-6 bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-200/50 shadow-lg shadow-slate-200/50 hover:shadow-xl hover:shadow-slate-300/30 transition-all duration-300"
                         whileHover={{ y: -4 }}
                     >
@@ -243,14 +257,64 @@ const BookDetails = () => {
                             <div className="w-2 h-2 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full"></div>
                             Preview Video
                         </h3>
-                        
-                        {bookData.videoCloudinary?.secure_url ? (
-                            <div className="rounded-xl overflow-hidden shadow-lg">
-                                <video 
-                                    src={bookData.videoCloudinary.secure_url} 
-                                    controls 
-                                    className="w-full h-56 object-cover"
-                                />
+
+                        {bookData.videoCloudinary?.secure_url || bookData.videoURL ? (
+                            <div className="rounded-xl overflow-hidden shadow-lg w-full h-56">
+                                {
+                                    (() => {
+                                        const videoURL = bookData.videoCloudinary?.secure_url || bookData.videoURL;
+
+                                        const isYouTube = videoURL.includes("youtube.com") || videoURL.includes("youtu.be");
+                                        const isGoogleDrive = videoURL.includes("drive.google.com");
+                                        const isEmbeddable = isYouTube || isGoogleDrive || videoURL.includes("docs.google.com");
+
+                                        if (isYouTube) {
+                                            const videoId = videoURL.includes("watch?v=")
+                                                ? new URL(videoURL).searchParams.get("v")
+                                                : videoURL.split("/").pop();
+                                            return (
+                                                <iframe
+                                                    src={`https://www.youtube.com/embed/${videoId}`}
+                                                    title="YouTube video"
+                                                    allowFullScreen
+                                                    className="w-full h-full"
+                                                />
+                                            );
+                                        } else if (isGoogleDrive) {
+                                            const match = videoURL.match(/\/d\/(.+?)\//);
+                                            const fileId = match ? match[1] : null;
+                                            if (fileId) {
+                                                return (
+                                                    <iframe
+                                                        src={`https://drive.google.com/file/d/${fileId}/preview`}
+                                                        title="Google Drive video"
+                                                        allow="autoplay"
+                                                        allowFullScreen
+                                                        className="w-full h-full"
+                                                    />
+                                                );
+                                            }
+                                        } else if (videoURL.endsWith(".mp4") || !isEmbeddable) {
+                                            return (
+                                                <video
+                                                    src={videoURL}
+                                                    controls
+                                                    className="w-full h-full object-cover"
+                                                />
+                                            );
+                                        }
+
+                                        return (
+                                            <iframe
+                                                src={videoURL}
+                                                title="Embedded Video"
+                                                allow="autoplay"
+                                                allowFullScreen
+                                                className="w-full h-full"
+                                            />
+                                        );
+                                    })()
+                                }
                             </div>
                         ) : (
                             <div className="w-full h-56 bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl flex items-center justify-center">
@@ -260,18 +324,20 @@ const BookDetails = () => {
                                 </div>
                             </div>
                         )}
+
+
                     </motion.div>
                 </motion.div>
 
                 {/* Modern Delete Modal */}
                 {showDeleteModal && (
-                    <motion.div 
+                    <motion.div
                         className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                     >
-                        <motion.div 
+                        <motion.div
                             className="bg-white rounded-2xl shadow-2xl p-6 w-full max-w-md border border-slate-200"
                             initial={{ scale: 0.9, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
@@ -287,12 +353,12 @@ const BookDetails = () => {
                                     <p className="text-slate-600 text-sm">This action cannot be undone</p>
                                 </div>
                             </div>
-                            
+
                             <p className="text-slate-700 mb-6">
-                                Are you sure you want to permanently delete 
+                                Are you sure you want to permanently delete
                                 <span className="font-bold text-slate-900"> "{bookData.title}"</span>?
                             </p>
-                            
+
                             <div className="flex gap-3">
                                 <button
                                     onClick={() => setShowDeleteModal(false)}

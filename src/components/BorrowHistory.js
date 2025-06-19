@@ -63,6 +63,7 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
                         dueDate: item.dueDate ? new Date(item.dueDate).toLocaleDateString() : "—",
                         returned: item.returnedAt ? new Date(item.returnedAt).toLocaleDateString() : "—",
                         bookThumbnail: item.bookThumbnailCloudinary?.secure_url || null,
+                        thumbanilURL : item.thumbanilURL || null,
                         userAvatar: item.userAvatar || "",
                         // Store original dates for sorting
                         borrowedAtRaw: item.borrowedAt,
@@ -141,6 +142,7 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
                         dueDate: item.dueDate ? new Date(item.dueDate).toLocaleDateString() : "—",
                         returned: item.returnedAt ? new Date(item.returnedAt).toLocaleDateString() : "—",
                         bookThumbnail: item.bookThumbnail?.secure_url || null,
+                        thumbanilURL : item.thumbanilURL || null,
                         userAvatar: item.userAvatar || "",
                         // Store original dates for sorting
                         borrowedAtRaw: item.borrowedAt,
