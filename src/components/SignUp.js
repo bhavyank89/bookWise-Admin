@@ -22,6 +22,9 @@ const AdminSignup = () => {
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+    const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
+
     useEffect(() => {
         const timer = setTimeout(() => setShowSkeleton(false), 1500);
         return () => clearTimeout(timer);
@@ -73,7 +76,7 @@ const AdminSignup = () => {
             form.append('role', "Admin");
             if (avatar) form.append('avatar', avatar);
 
-            const res = await fetch(`http://localhost:4000/auth/createUser`, {
+            const res = await fetch(`${SERVER_URL}/auth/createUser`, {
                 method: 'POST',
                 body: form
             });
@@ -118,7 +121,7 @@ const AdminSignup = () => {
                             className="space-y-6"
                         >
                             <div className="space-y-4">
-                                <h1 onClick={()=>window.location.href = 'http://localhost:3000'} className="text-3xl text-[#25388C] cursor-pointer font-bold flex items-center gap-2">
+                                <h1 onClick={() => window.location.href = `${MAIN_URL}`} className="text-3xl text-[#25388C] cursor-pointer font-bold flex items-center gap-2">
                                     <BookOpen size={28} /> BookWise
                                 </h1>
                                 <p className="text-gray-600">Create your Admin account</p>

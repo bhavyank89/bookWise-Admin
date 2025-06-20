@@ -22,12 +22,14 @@ export default function AllBooks({ activeUser }) {
   const [bookToDelete, setBookToDelete] = useState(null);
   const booksPerPage = 10;
 
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchBookData = async () => {
       try {
-        const response = await fetch(`http://localhost:4000/book/fetchall`);
+        const response = await fetch(`${SERVER_URL}/book/fetchall`);
         if (!response.ok) throw new Error("Network error");
         const data = await response.json();
         setBooks(data.books || []);

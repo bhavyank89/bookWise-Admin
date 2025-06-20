@@ -5,10 +5,12 @@ import { Loader2 } from 'lucide-react';
 function DeleteBook({ setBookToDelete, setShowModal, bookToDelete, setBooks }) {
     const [loading, setLoading] = useState(false);
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const confirmDeleteBook = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`http://localhost:4000/book/delete/${bookToDelete._id}`, {
+            const response = await fetch(`${SERVER_URL}/book/delete/${bookToDelete._id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });

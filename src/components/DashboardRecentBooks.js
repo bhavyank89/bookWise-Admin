@@ -44,6 +44,8 @@ function DashboardRecentBooks({
         []
     );
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     useEffect(() => {
         // ✅ Safe check before using isMounted
         if (!isMounted || typeof isMounted.current === "undefined") return;
@@ -53,7 +55,7 @@ function DashboardRecentBooks({
         const fetchBooks = async () => {
             setLoading(true);
             try {
-                const res = await fetch("http://localhost:4000/book/fetchall");
+                const res = await fetch(`${SERVER_URL}/book/fetchall`);
                 if (!res.ok) throw new Error("Request failed");
 
                 const { books } = await res.json();

@@ -13,6 +13,8 @@ function DashboardBorrowHistory({
 }) {
     const navigate = useNavigate();
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     // ✅ Memoized fallback in case fetch fails
     const fallbackHistory = useMemo(
         () => [
@@ -53,7 +55,7 @@ function DashboardBorrowHistory({
         const fetchHistory = async () => {
             setLoading(true);
             try {
-                const res = await fetch("http://localhost:4000/book/all-borrow-history");
+                const res = await fetch(`${SERVER_URL}/book/all-borrow-history`);
                 if (!res.ok) throw new Error("Request failed");
 
                 const { data } = await res.json();

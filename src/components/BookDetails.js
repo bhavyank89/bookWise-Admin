@@ -13,6 +13,8 @@ const BookDetails = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
@@ -20,8 +22,8 @@ const BookDetails = () => {
 
             try {
                 const [bookRes, userRes] = await Promise.all([
-                    fetch(`http://localhost:4000/book/fetch/${bookId}`),
-                    fetch(`http://localhost:4000/user/`, {
+                    fetch(`${SERVER_URL}/book/fetch/${bookId}`),
+                    fetch(`${SERVER_URL}/user/`, {
                         method: 'GET',
                         credentials: 'include',
                         headers: {
@@ -72,7 +74,7 @@ const BookDetails = () => {
 
     const handleDelete = async () => {
         try {
-            const res = await fetch(`http://localhost:4000/book/delete/${bookId}`, { method: 'DELETE' });
+            const res = await fetch(`${SERVER_URL}/book/delete/${bookId}`, { method: 'DELETE' });
             if (!res.ok) throw new Error('Failed to delete book');
             toast.success('Book deleted successfully!');
             navigate('/');

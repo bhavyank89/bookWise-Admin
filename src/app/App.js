@@ -5,6 +5,8 @@ function App({ activeUser, setActiveUser, setIsLogin }) {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const fetchUser = async () => {
         try {
             const token = localStorage.getItem("adminToken");
@@ -16,7 +18,7 @@ function App({ activeUser, setActiveUser, setIsLogin }) {
                 return;
             }
 
-            const res = await fetch("http://localhost:4000/user", {
+            const res = await fetch(`${SERVER_URL}/user`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

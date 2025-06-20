@@ -9,11 +9,13 @@ const UserSearchDropdown = ({ onSelectUser, selectedUser }) => {
     const [loading, setLoading] = useState(false);
     const dropdownRef = useRef(null);
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const fetchUsers = async () => {
         setLoading(true);
         try {
             console.log('Fetching users from API...');
-            const response = await fetch('http://localhost:4000/user/fetchall');
+            const response = await fetch(`${SERVER_URL}/user/fetchall`);
 
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

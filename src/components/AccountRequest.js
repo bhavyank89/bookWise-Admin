@@ -17,6 +17,8 @@ export default function AccountRequests({ activeUser }) {
 
     const requestsPerPage = 10;
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const generatePlaceholderData = (user) => ({
         ...user,
         avatar: user.avatar?.[0]?.path || null,
@@ -31,7 +33,7 @@ export default function AccountRequests({ activeUser }) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await fetch("http://localhost:4000/user/fetchall");
+                const response = await fetch(`${SERVER_URL}/user/fetchall`);
                 const result = await response.json();
                 const usersWithPlaceholders = result.users.map(generatePlaceholderData);
                 setData(usersWithPlaceholders);
@@ -68,8 +70,8 @@ export default function AccountRequests({ activeUser }) {
     const handleAction = async (actionType, id, item) => {
         const url =
             actionType === "verify"
-                ? "http://localhost:4000/user/verify"
-                : "http://localhost:4000/user/deverify";
+                ? `${SERVER_URL}/verify`
+                : `${SERVER_URL}/deverify`;
 
         try {
             const response = await fetch(url, {
@@ -207,10 +209,10 @@ export default function AccountRequests({ activeUser }) {
                                                     <Dialog.Root>
                                                         <Dialog.Trigger asChild>
                                                             <button
-                                                            disabled={!activeUser.isVerified}
+                                                                disabled={!activeUser.isVerified}
                                                                 className={`text-xs px-3 py-1 rounded flex items-center gap-1 ${item.isVerified
-                                                                        ? "bg-red-100 text-red-700"
-                                                                        : "bg-green-100 text-green-700"
+                                                                    ? "bg-red-100 text-red-700"
+                                                                    : "bg-green-100 text-green-700"
                                                                     }`}
                                                             >
                                                                 {item.isVerified ? (

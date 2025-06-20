@@ -25,11 +25,13 @@ export default function UpdateBook() {
   const [previewVideo, setPreviewVideo] = useState(null);
   const [previewPdf, setPreviewPdf] = useState(null);
 
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
   useEffect(() => {
     const fetchBook = async () => {
       try {
         setError(null);
-        const res = await fetch(`http://localhost:4000/book/fetch/${bookId}`);
+        const res = await fetch(`${SERVER_URL}/book/fetch/${bookId}`);
         const data = await res.json();
         if (!res.ok || !data.success) throw new Error(data.error || "Failed to fetch book");
 
@@ -108,7 +110,7 @@ export default function UpdateBook() {
       }
 
       setLoading(true);
-      const res = await fetch(`http://localhost:4000/book/update/${bookId}`, {
+      const res = await fetch(`${SERVER_URL}/book/update/${bookId}`, {
         method: "PUT",
         body: data,
       });
@@ -129,7 +131,7 @@ export default function UpdateBook() {
 
   const handleDelete = async () => {
     try {
-      const res = await fetch(`http://localhost:4000/book/delete/${bookId}`, {
+      const res = await fetch(`${SERVER_URL}/book/delete/${bookId}`, {
         method: "DELETE",
       });
       const data = await res.json();

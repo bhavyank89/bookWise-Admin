@@ -15,6 +15,8 @@ export default function MyComponent({ activeUser }) {
     const [currentPage, setCurrentPage] = useState(1);
     const usersPerPage = 10;
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
     const [inputEmail, setInputEmail] = useState("");
@@ -23,7 +25,7 @@ export default function MyComponent({ activeUser }) {
         async function fetchUsers() {
             try {
                 setLoading(true);
-                const res = await fetch("http://localhost:4000/user/fetchall");
+                const res = await fetch(`${SERVER_URL}/user/fetchall`);
                 const json = await res.json();
                 if (!res.ok) throw new Error(json.message || "Failed to fetch users");
                 setUsers(json.users || []);
@@ -78,7 +80,7 @@ export default function MyComponent({ activeUser }) {
         }
 
         try {
-            const res = await fetch(`localhost:4000/user/delete/${selectedUser._id}`, { method: "DELETE" });
+            const res = await fetch(`${SERVER_URL}/user/delete/${selectedUser._id}`, { method: "DELETE" });
             const json = await res.json();
             if (!res.ok) throw new Error(json.message || "Deletion failed");
 

@@ -45,6 +45,8 @@ function DashboardBorrowRequest({
     []
   );
 
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
   useEffect(() => {
     if (!isMounted || typeof isMounted.current === "undefined") return;
 
@@ -53,7 +55,7 @@ function DashboardBorrowRequest({
     const fetchData = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:4000/book/all-requests");
+        const res = await fetch(`${SERVER_URL}/book/all-requests`);
         if (!res.ok) throw new Error("Request failed");
 
         const data = await res.json();

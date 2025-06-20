@@ -14,6 +14,9 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
     const [showSkeleton, setShowSkeleton] = useState(true);
     const navigate = useNavigate();
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+    const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
+
     useEffect(() => {
         const timer = setTimeout(() => {
             setShowSkeleton(false);
@@ -26,7 +29,7 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
         setIsLoading(true);
 
         try {
-            const res = await fetch("http://localhost:4000/auth/login", {
+            const res = await fetch(`${SERVER_URL}/auth/login`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -45,7 +48,7 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
                 throw new Error(data.error || "Invalid credentials");
             }
 
-            const user = await fetch(`http://localhost:4000/user`, {
+            const user = await fetch(`${SERVER_URL}/user`, {
                 method: 'GET',
                 headers: {
                     'auth-token': data.token,
@@ -111,7 +114,7 @@ const LoginPage = ({ setIsLogin, setActiveUser }) => {
                                 className="space-y-4"
                             >
                                 <div className="flex items-center space-x-2">
-                                    <h1 onClick={()=>window.location.href = 'http://localhost:3000'} className="text-3xl cursor-pointer text-[#25388C] font-bold flex items-center gap-2">
+                                    <h1 onClick={() => window.location.href = `${MAIN_URL}`} className="text-3xl cursor-pointer text-[#25388C] font-bold flex items-center gap-2">
                                         <BookOpen size={28} /> BookWise
                                     </h1>
                                 </div>

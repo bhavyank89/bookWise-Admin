@@ -11,6 +11,9 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
     const location = useLocation();
     const isActive = (path) => location.pathname === path;
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+    const MAIN_URL = process.env.NEXT_PUBLIC_MAIN_URL;
+
     const handleNavigation = (path) => {
         navigate(path);
         if (closeSidebar) closeSidebar();
@@ -48,7 +51,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
                     <Tooltip.Root>
                         <Tooltip.Trigger asChild>
                             <div
-                                onClick={() => window.location.href = 'http://localhost:3000'}
+                                onClick={() => window.location.href = `${MAIN_URL}`}
                                 className="mt-10 pt-2 cursor-pointer transition-all duration-300"
                             >
                                 <div className="flex items-center justify-center transition-all duration-300">

@@ -26,10 +26,12 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
 
     const requestsPerPage = 10;
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const fetchAllBorrowHistory = async () => {
         setLoading(true);
         try {
-            const response = await fetch("http://localhost:4000/book/all-borrow-history");
+            const response = await fetch(`${SERVER_URL}/book/all-borrow-history`);
             const result = await response.json();
 
             if (result.success && result.data) {
@@ -90,7 +92,7 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
     const fetchUserBorrowHistory = async (userId) => {
         setLoading(true);
         try {
-            const response = await fetch("http://localhost:4000/book/borrowedHistory", {
+            const response = await fetch(`${SERVER_URL}/book/borrowedHistory`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',
@@ -246,7 +248,7 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
                 />
 
                 <Pagination
-                    totalPages={Math.ceil(sorted.length / requestsPerPage)} 
+                    totalPages={Math.ceil(sorted.length / requestsPerPage)}
                     itemsPerPage={requestsPerPage}
                     currentPage={currentPage}
                     setCurrentPage={setCurrentPage}

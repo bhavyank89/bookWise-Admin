@@ -13,6 +13,8 @@ function DashboardAccountRequest({
 }) {
     const navigate = useNavigate();
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const generatePlaceholderData = useCallback((user) => {
         const avatar =
             typeof user.avatar === "string"
@@ -62,7 +64,7 @@ function DashboardAccountRequest({
         const fetchData = async () => {
             setLoading(true);
             try {
-                const res = await fetch("http://localhost:4000/user/fetchall");
+                const res = await fetch(`${SERVER_URL}/user/fetchall`);
                 if (!res.ok) throw new Error("Failed to fetch users");
 
                 const data = await res.json();

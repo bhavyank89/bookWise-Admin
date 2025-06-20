@@ -82,9 +82,11 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
 
     const requestsPerPage = 10;
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const fetchData = async () => {
         try {
-            const response = await fetch("http://localhost:4000/book/all-requests");
+            const response = await fetch(`${SERVER_URL}/book/all-requests`);
             const result = await response.json();
 
             const mappedData = result.requests.map((req, idx) => {
@@ -157,8 +159,8 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
 
         const url =
             action === "return"
-                ? `http://localhost:4000/book/return`
-                : `http://localhost:4000/book/borrow`;
+                ? `${SERVER_URL}/book/return`
+                : `${SERVER_URL}/book/borrow`;
 
         try {
             await new Promise((resolve) => setTimeout(resolve, 2000));

@@ -43,6 +43,8 @@ function MainApp() {
   const location = useLocation();
   const [screenWidth, setScreenWidth] = useState(window.innerWidth);
 
+  const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
   // Enhanced fetchUser function using localStorage
   const fetchUser = async () => {
     try {
@@ -56,7 +58,7 @@ function MainApp() {
         return { success: false, error: "No token found" };
       }
 
-      const res = await fetch("http://localhost:4000/user", {
+      const res = await fetch(`${SERVER_URL}/user`, {
         method: "GET",
         credentials: "include",
         headers: {

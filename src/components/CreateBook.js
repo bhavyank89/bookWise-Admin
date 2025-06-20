@@ -27,6 +27,8 @@ export default function CreateBook() {
         pdfURL: "", thumbnailURL: "", videoURL: ""
     });
 
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
+
     const [preview, setPreview] = useState({ thumbnail: null, pdf: null, video: null });
 
     const [inputMode, setInputMode] = useState({
@@ -103,7 +105,7 @@ export default function CreateBook() {
 
         try {
             setLoading(true);
-            const response = await fetch("http://localhost:4000/book/createbook", {
+            const response = await fetch(`${SERVER_URL}/book/createbook`, {
                 method: "POST",
                 body: data,
             });
