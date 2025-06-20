@@ -245,10 +245,10 @@ export default function BorrowHistory({ activeUser = { name: "Admin" } }) {
                 />
 
                 <Pagination
-                    totalItems={sorted.length}
+                    totalPages={sorted.length}
                     itemsPerPage={requestsPerPage}
                     currentPage={currentPage}
-                    onPageChange={setCurrentPage}
+                    setCurrentPage={setCurrentPage}
                     theme="dark"
                 />
             </div>
