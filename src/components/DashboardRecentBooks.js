@@ -13,6 +13,7 @@ function DashboardRecentBooks({
     setRecentBooks,
     SkeletonBox,
     isMounted,
+    activeUser
 }) {
     const navigate = useNavigate();
 
@@ -96,8 +97,9 @@ function DashboardRecentBooks({
             <div className="flex items-center gap-3 mb-4 bg-[#F8F8FF] p-2 rounded-lg hover:bg-[#E2E8F0] transition-colors">
                 <button
                     onClick={() => navigate("/createBook")}
-                    className="flex items-center gap-2 text-sm text-black"
-                >
+                    disabled={!activeUser.isVerified}
+                    className={`flex items-center gap-2 text-sm text-black`
+                    }>
                     <div className="p-2 rounded-full bg-white">
                         <Plus size={16} />
                     </div>

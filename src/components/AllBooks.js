@@ -214,6 +214,7 @@ export default function AllBooks({ activeUser }) {
               </button>
 
               <button
+                disabled={!activeUser.isVerified}
                 onClick={() => navigate("/createBook")}
                 className="w-full sm:w-auto px-3 sm:px-4 py-2 bg-blue-700 text-white rounded flex items-center justify-center gap-2 transition-transform duration-200 text-sm"
               >
@@ -277,6 +278,7 @@ export default function AllBooks({ activeUser }) {
                       <td>
                         <div className="flex items-center justify-center gap-2 sm:gap-4">
                           <button
+                            disabled={!activeUser.isVerified}
                             className="text-blue-700 hover:opacity-80 p-1"
                             onClick={() => navigate(`/update/${book._id}`)}
                             aria-label={`Edit ${book.title}`}
@@ -284,6 +286,7 @@ export default function AllBooks({ activeUser }) {
                             <Pencil size={14} />
                           </button>
                           <button
+                            disabled={!activeUser.isVerified}
                             className="text-red-700 hover:opacity-80 p-1"
                             onClick={() => handleDeleteClick(book)}
                             aria-label={`Delete ${book.title}`}

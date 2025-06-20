@@ -191,7 +191,7 @@ export default function AccountRequests({ activeUser }) {
                                                             </a>
                                                         </Tooltip.Trigger>
                                                         <Tooltip.Content className="bg-white border shadow-lg p-2 rounded">
-                                                            {item.uniIdDoc ? (
+                                                            {(item.uniIdDoc || activeUser.isVerified) ? (
                                                                 <img
                                                                     src={item.uniIdDoc}
                                                                     alt="University ID"
@@ -207,6 +207,7 @@ export default function AccountRequests({ activeUser }) {
                                                     <Dialog.Root>
                                                         <Dialog.Trigger asChild>
                                                             <button
+                                                            disabled={!activeUser.isVerified}
                                                                 className={`text-xs px-3 py-1 rounded flex items-center gap-1 ${item.isVerified
                                                                         ? "bg-red-100 text-red-700"
                                                                         : "bg-green-100 text-green-700"

@@ -130,7 +130,9 @@ export default function MyComponent({ activeUser }) {
                                 <th className="py-2 pl-2 min-w-[150px]" onClick={() => toggleSort("name")}>Name</th>
                                 <th className="p-3">University ID</th>
                                 <th className="p-3">Created</th>
-                                <th className="p-3">Borrowed Books</th>
+                                <th className="p-3">Borrowed</th>
+                                <th className="p-3">Saved</th>
+                                <th className="p-3">History</th>
                                 <th className="py-2">University ID Card</th>
                                 <th className="p-3">Action</th>
                             </tr>
@@ -168,14 +170,17 @@ export default function MyComponent({ activeUser }) {
                                             </td>
                                             <td className="p-3">{user.uniId}</td>
                                             <td className="p-3">{new Date(user.createdAt).toLocaleDateString()}</td>
-                                            <td className="p-3">{user.books?.length || 0}</td>
+                                            <td className="p-3">{user.borrowedBooks?.length || 0}</td>
+                                            <td className="p-3">{user.borrowHistory?.length || 0}</td>
+                                            <td className="p-3">{user.savedBooks?.length || 0}</td>
                                             <td className="p-3">
                                                 {user.uniIdDoc?.[0]?.path ? (
-                                                    <a href={user.uniIdDoc[0].path} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">View ID</a>
+                                                    <a href={(activeUser.isVerified ? user.uniIdDoc[0].path : "")} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline">View ID</a>
                                                 ) : "—"}
                                             </td>
                                             <td className="p-3">
                                                 <motion.button
+                                                    disabled={!activeUser.isVerified}
                                                     whileHover={{ scale: 1.1, rotate: -5 }}
                                                     whileTap={{ scale: 0.95 }}
                                                     onClick={() => {

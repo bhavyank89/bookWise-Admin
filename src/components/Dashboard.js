@@ -124,6 +124,7 @@ function Dashboard({ activeUser }) {
                             setLoading={setLoading}
                             setRecentBooks={setRecentBooks}
                             isMounted={isMounted}
+                            activeUser={activeUser}
                         />
                     </motion.div>
 

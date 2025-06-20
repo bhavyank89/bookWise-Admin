@@ -146,8 +146,20 @@ function MainApp() {
     const handleMouseOver = (e) => {
       const link = e.target.closest("a");
       const button = e.target.closest("button");
-      cursor.classList.remove("custom-cursor--hover");
-      if (link || button) {
+
+      cursor.classList.remove("custom-cursor--hover", "custom-cursor--disabled");
+
+      if (button) {
+        if (button.disabled) {
+          cursor.classList.add("custom-cursor--disabled");
+        } else {
+          cursor.classList.add("custom-cursor--hover");
+          if (soundUnlocked) {
+            snapSound.currentTime = 0;
+            snapSound.play().catch(() => { });
+          }
+        }
+      } else if (link) {
         cursor.classList.add("custom-cursor--hover");
         if (soundUnlocked) {
           snapSound.currentTime = 0;
@@ -157,7 +169,7 @@ function MainApp() {
     };
 
     const handleMouseOut = () => {
-      cursor.classList.remove("custom-cursor--hover");
+      cursor.classList.remove("custom-cursor--hover", "custom-cursor--disabled");
     };
 
     document.addEventListener("mousemove", handleMouseMove);
@@ -174,6 +186,7 @@ function MainApp() {
       document.removeEventListener("mouseout", handleMouseOut);
     };
   }, []);
+
 
   useEffect(() => {
     const handleResize = () => setScreenWidth(window.innerWidth);
@@ -449,16 +462,16 @@ export default function Home() {
     <Tooltip.Provider>
       <Router>
         <Toaster
-        position="top-right"
-        reverseOrder={false}
-        toastOptions={{
-          duration: 3000,
-          style: {
-            background: '#333',
-            color: '#fff',
-          },
-        }}
-      />
+          position="top-right"
+          reverseOrder={false}
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#333',
+              color: '#fff',
+            },
+          }}
+        />
         <MainApp />
       </Router>
     </Tooltip.Provider>

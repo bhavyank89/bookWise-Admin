@@ -369,7 +369,7 @@ export default function BorrowRequests({ activeUser = { name: "Admin" } }) {
                                                 <td className="py-4 px-4 text-center">
                                                     <button
                                                         onClick={() => handleAction(actionButton.action, item)}
-                                                        disabled={isActionLoading}
+                                                        disabled={isActionLoading || !activeUser.isVerified}
                                                         className={`px-3 py-1 rounded text-xs font-medium transition ${actionButton.action === "return"
                                                             ? "text-orange-600 hover:text-orange-800 hover:bg-orange-50"
                                                             : "text-green-600 hover:text-green-800 hover:bg-green-50"

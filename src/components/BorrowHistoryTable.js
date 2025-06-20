@@ -5,7 +5,8 @@ function BorrowHistoryTable({
     currentItems,
     requestsPerPage,
     handleGenerateDetails,
-    Skeleton
+    Skeleton,
+    activeUser
 }) {
     return (
         <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-6">
@@ -14,18 +15,18 @@ function BorrowHistoryTable({
             </h2>
 
             <div className="overflow-x-auto">
-                <table className="w-full text-sm text-left table-fixed min-w-[900px]">
+                <table className="w-full text-sm text-left table-fixed min-w-[1000px]">
                     <thead>
                         <tr className="text-gray-600 bg-gray-50">
-                            <th className="py-3 px-4 w-1/5 font-medium">Book</th>
-                            <th className="py-3 px-4 w-1/5 font-medium">User</th>
-                            <th className="py-3 px-4 w-1/10 font-medium">Status</th>
-                            <th className="py-3 px-4 w-1/10 font-medium">Requested</th>
-                            <th className="py-3 px-4 w-1/10 font-medium">Borrowed</th>
-                            <th className="py-3 px-4 w-1/10 font-medium">Due On</th>
-                            <th className="py-3 px-4 w-1/10 font-medium">Returned</th>
-                            <th className="py-3 px-4 w-1/10 font-medium">Late Fine</th>
-                            <th className="py-3 px-4 w-1/10 font-medium text-center">Action</th>
+                            <th className="py-3 mr-2 px-4 w-[20%] font-medium">Book</th>
+                            <th className="py-3 px-4 w-[20%] font-medium">User</th>
+                            <th className="py-3 px-4 w-[10%] font-medium">Status</th>
+                            <th className="py-3 px-4 w-[10%] font-medium">Requested</th>
+                            <th className="py-3 px-4 w-[10%] font-medium">Borrowed</th>
+                            <th className="py-3 px-4 w-[10%] font-medium">Due On</th>
+                            <th className="py-3 px-4 w-[10%] font-medium">Returned</th>
+                            <th className="py-3 px-4 w-[10%] font-medium">Late Fine</th>
+                            <th className="py-3 px-4 w-[10%] font-medium text-center">Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -41,58 +42,61 @@ function BorrowHistoryTable({
                             ))
                         ) : currentItems.length > 0 ? (
                             currentItems.map((item) => (
-                                <tr
-                                    key={item.id}
-                                    className="hover:bg-gray-50 transition-all duration-200 border-b"
-                                >
-                                    <td className="py-4 px-4">
-                                        <div className="flex items-center gap-3">
+                                <tr key={item.id} className="hover:bg-gray-50 transition-all duration-200 border-b">
+                                    {/* Book Column */}
+                                    <td className="py-4 mr-2 px-4 pr-6">
+                                        <div className="flex items-center gap-4 min-w-0">
                                             {item?.bookThumbnail || item?.thumbnailURL ? (
                                                 <img
                                                     src={item.bookThumbnail || item.thumbnailURL}
                                                     alt="Book cover"
-                                                    className="w-10 h-14 object-cover rounded shadow"
+                                                    className="w-10 h-14 object-cover rounded shadow flex-shrink-0"
                                                 />
                                             ) : (
-                                                <div className="w-10 h-14 bg-blue-100 text-blue-700 rounded shadow flex items-center justify-center font-bold text-xl">
+                                                <div className="w-10 h-14 bg-blue-100 text-blue-700 rounded shadow flex items-center justify-center font-bold text-xl flex-shrink-0">
                                                     {item.bookTitle?.[0]?.toUpperCase() || 'B'}
                                                 </div>
                                             )}
-                                            <div className="flex flex-col">
-                                                <span className="font-medium text-gray-800 truncate">
+                                            <div className="flex flex-col min-w-0">
+                                                <span className="font-medium text-gray-800 truncate w-[150px]">
                                                     {item.bookTitle}
                                                 </span>
-                                                <span className="text-sm text-gray-500 truncate">
+                                                <span className="text-sm text-gray-500 truncate w-[150px]">
                                                     {item.bookAuthor || 'Unknown Author'}
                                                 </span>
                                             </div>
                                         </div>
                                     </td>
 
-                                    <td className="py-4 px-4">
-                                        <div className="flex items-center gap-3">
+                                    {/* User Column */}
+                                    <td className="py-4 px-4 pl-6">
+                                        <div className="flex items-center gap-4 min-w-0">
                                             {item.userAvatar ? (
                                                 <img
                                                     src={item.userAvatar[0].path}
                                                     alt="User avatar"
-                                                    className="w-8 h-8 rounded-full object-cover shadow"
+                                                    className="w-8 h-8 rounded-full object-cover shadow flex-shrink-0"
                                                 />
                                             ) : (
-                                                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                                <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                                                     {item.userName ? item.userName[0] : "?"}
                                                 </div>
                                             )}
-                                            <div className="min-w-0">
-                                                <div className="text-sm font-medium text-gray-700 truncate">
+                                            <div className="flex flex-col min-w-0">
+                                                <div className="text-sm font-medium text-gray-700 truncate w-[150px]">
                                                     {item.userName}
                                                 </div>
-                                                <div className="text-xs text-gray-500 truncate">
+                                                <div className="text-xs text-gray-500 truncate w-[150px]">
                                                     {item.userEmail}
                                                 </div>
-                                                <div className="text-xs text-gray-400 truncate">{item.uniId}</div>
+                                                <div className="text-xs text-gray-400 truncate w-[150px]">
+                                                    {item.uniId}
+                                                </div>
                                             </div>
                                         </div>
                                     </td>
+
+                                    {/* Other Columns */}
                                     <td className="py-4 px-4">
                                         <span
                                             className={`inline-block px-2 py-1 rounded-full text-xs font-semibold ${item.status === "Returned"
@@ -116,6 +120,7 @@ function BorrowHistoryTable({
                                     </td>
                                     <td className="py-4 px-4 text-center">
                                         <button
+                                            disabled={!activeUser.isVerified}
                                             onClick={() => handleGenerateDetails(item)}
                                             className="px-3 py-1 rounded text-xs font-medium transition text-blue-600 hover:text-blue-800 hover:bg-blue-50"
                                             aria-label="Generate details"
