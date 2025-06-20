@@ -1,13 +1,14 @@
-"use client";
+'use client';
 
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+
 import DashboardBorrowRequest from "./DashboardBorrowRequest";
 import DashboardRecentBooks from "./DashboardRecentBooks";
 import DashboardAccountRequest from "./DashboardAccountRequest";
 import DashboardBorrowHistory from "./DashboardBorrowHistory";
+import UnverifiedUserModal from "./unvarifiedUser";
 
-// Skeleton UI Component
 const SkeletonBox = ({ height = "h-5", width = "w-full" }) => (
     <div className={`bg-gray-300 animate-pulse rounded ${height} ${width}`} />
 );
@@ -18,10 +19,32 @@ function Dashboard({ activeUser }) {
     const [recentBooks, setRecentBooks] = useState([]);
     const [accountRequests, setAccountRequests] = useState([]);
     const [borrowHistory, setBorrowHistory] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    // Show unverified modal once per session
+    useEffect(() => {
+        if (activeUser?.isVerified === false) {
+            const hasSeenModal = sessionStorage.getItem("adminHasSeenUnverifiedModal");
+            if (!hasSeenModal) {
+                setIsModalOpen(true);
+                sessionStorage.setItem("adminHasSeenUnverifiedModal", "true");
+            }
+        }
+    }, [activeUser]);
+
+    const closeModal = () => setIsModalOpen(false);
+    const handleExplore = () => setIsModalOpen(false);
     const isMounted = useRef(true);
 
     return (
         <div className="min-h-screen w-full bg-gray-50">
+            {/* Unverified User Modal */}
+            <UnverifiedUserModal
+                closeModal={closeModal}
+                isModalOpen={isModalOpen}
+                handleExplore={handleExplore}
+            />
+
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
                 {/* Header */}
                 <header className="mb-6 lg:mb-8">
@@ -41,22 +64,10 @@ function Dashboard({ activeUser }) {
                 {/* Metrics */}
                 <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 lg:gap-6 mb-8">
                     {[
-                        {
-                            label: "Total Users",
-                            value: accountRequests.length,
-                        },
-                        {
-                            label: "Total Books",
-                            value: recentBooks.length,
-                        },
-                        {
-                            label: "Borrow Requests",
-                            value: borrowRequests.length,
-                        },
-                        {
-                            label: "Total Borrowed",
-                            value: borrowHistory.length,
-                        },
+                        { label: "Total Users", value: accountRequests.length },
+                        { label: "Total Books", value: recentBooks.length },
+                        { label: "Borrow Requests", value: borrowRequests.length },
+                        { label: "Total Borrowed", value: borrowHistory.length },
                     ].map((item, i) => (
                         <motion.div
                             key={i}
@@ -84,7 +95,6 @@ function Dashboard({ activeUser }) {
 
                 {/* Main Grid */}
                 <section className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5 lg:gap-6 mb-8">
-                    {/* Borrow Requests */}
                     <motion.div
                         className="col-span-12 md:col-span-6 lg:col-span-4 bg-white border border-gray-100 shadow-md rounded-xl h-full min-h-[400px]"
                         initial={{ opacity: 0, x: -20 }}
@@ -101,7 +111,6 @@ function Dashboard({ activeUser }) {
                         />
                     </motion.div>
 
-                    {/* Recent Books */}
                     <motion.div
                         className="col-span-12 md:col-span-6 lg:col-span-4 bg-white border border-gray-100 shadow-md rounded-xl h-full min-h-[400px]"
                         initial={{ opacity: 0, y: 20 }}
@@ -118,7 +127,6 @@ function Dashboard({ activeUser }) {
                         />
                     </motion.div>
 
-                    {/* Borrow History */}
                     <motion.div
                         className="col-span-12 md:col-span-12 lg:col-span-4 bg-white border border-gray-100 shadow-md rounded-xl h-full min-h-[400px]"
                         initial={{ opacity: 0, x: 20 }}
@@ -127,16 +135,16 @@ function Dashboard({ activeUser }) {
                     >
                         <DashboardBorrowHistory
                             loading={loading}
-                            setLoading={setLoading}
                             borrowHistory={borrowHistory}
+                            setLoading={setLoading}
                             setBorrowHistory={setBorrowHistory}
-                            isMounted={isMounted}
                             SkeletonBox={SkeletonBox}
+                            isMounted={isMounted}
                         />
                     </motion.div>
                 </section>
 
-                {/* Account Requests - Full Width */}
+                {/* Full Width Account Requests */}
                 <motion.section
                     className="bg-white border border-gray-100 shadow-md rounded-xl p-4 sm:p-5 lg:p-6"
                     initial={{ opacity: 0, y: 20 }}
@@ -148,8 +156,8 @@ function Dashboard({ activeUser }) {
                         accountRequests={accountRequests}
                         SkeletonBox={SkeletonBox}
                         setLoading={setLoading}
-                        isMounted={isMounted}
                         setAccountRequests={setAccountRequests}
+                        isMounted={isMounted}
                     />
                 </motion.section>
             </div>

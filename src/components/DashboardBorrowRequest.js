@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
@@ -44,6 +46,8 @@ function DashboardBorrowRequest({
   );
 
   useEffect(() => {
+    if (!isMounted || typeof isMounted.current === "undefined") return;
+
     isMounted.current = true;
 
     const fetchData = async () => {
@@ -100,20 +104,21 @@ function DashboardBorrowRequest({
     };
 
     const timeout = setTimeout(fetchData, 1000);
+
     return () => {
       clearTimeout(timeout);
-      isMounted.current = false;
+      if (isMounted?.current !== undefined) {
+        isMounted.current = false;
+      }
     };
-  }, [fallbackBooks, setBorrowRequests, setLoading]);
+  }, [fallbackBooks, setBorrowRequests, setLoading, isMounted]);
 
   return (
     <div className="w-full h-full bg-white shadow-md rounded-xl p-5">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-4">
         <h2 className="font-bold text-lg">Borrow Requests</h2>
         <button
-          onClick={() => {
-            navigate("/borrow-requests");
-          }}
+          onClick={() => navigate("/borrow-requests")}
           className="text-sm bg-[#F8F8FF] px-3 py-1 rounded text-[#25388C] hover:underline"
         >
           View all
@@ -123,10 +128,7 @@ function DashboardBorrowRequest({
       <div className="flex flex-col gap-4 overflow-y-auto max-h-[400px] pr-1">
         {loading ? (
           [...Array(3)].map((_, i) => (
-            <div
-              key={i}
-              className="flex gap-3 bg-[#F8F8FF] p-3 rounded-lg"
-            >
+            <div key={i} className="flex gap-3 bg-[#F8F8FF] p-3 rounded-lg">
               <SkeletonBox height="h-20" width="w-14" />
               <div className="flex flex-col gap-2">
                 <SkeletonBox width="w-40" />

@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useMemo } from "react";
 import { Plus } from "lucide-react";
 import { motion } from "framer-motion";
@@ -14,7 +16,6 @@ function DashboardRecentBooks({
 }) {
     const navigate = useNavigate();
 
-    // ✅ Fallback data in case of fetch failure
     const fallbackBooks = useMemo(
         () => [
             {
@@ -42,8 +43,10 @@ function DashboardRecentBooks({
         []
     );
 
-    // ✅ Fetch recently added books
     useEffect(() => {
+        // ✅ Safe check before using isMounted
+        if (!isMounted || typeof isMounted.current === "undefined") return;
+
         isMounted.current = true;
 
         const fetchBooks = async () => {
@@ -70,7 +73,9 @@ function DashboardRecentBooks({
         const timeout = setTimeout(fetchBooks, 1000);
         return () => {
             clearTimeout(timeout);
-            isMounted.current = false;
+            if (isMounted?.current !== undefined) {
+                isMounted.current = false;
+            }
         };
     }, [fallbackBooks, setLoading, setRecentBooks, isMounted]);
 

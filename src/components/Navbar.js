@@ -20,6 +20,7 @@ function Navbar({ setIsLogin, setActiveUser, activeUser, closeSidebar, setCollap
         setIsLogin(false);
         setActiveUser(null);
         localStorage.removeItem('adminToken');
+        sessionStorage.removeItem('adminHasSeenUnverifiedModal');
         navigate("/login");
     };
 
