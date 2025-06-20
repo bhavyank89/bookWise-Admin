@@ -5,6 +5,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 
 const BookDetails = () => {
+    const [activeUser, setActiveUser] = useState();
     const { bookId } = useParams();
     const navigate = useNavigate();
     const location = useLocation();
@@ -13,20 +14,40 @@ const BookDetails = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     useEffect(() => {
-        const fetchBookData = async () => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            const token = localStorage.getItem("adminToken");
+
             try {
-                const res = await fetch(`http://localhost:4000/book/fetch/${bookId}`);
-                if (!res.ok) throw new Error('Failed to fetch book data');
-                const data = await res.json();
-                setBookData(data.book);
+                const [bookRes, userRes] = await Promise.all([
+                    fetch(`http://localhost:4000/book/fetch/${bookId}`),
+                    fetch(`http://localhost:4000/user/`, {
+                        method: 'GET',
+                        credentials: 'include',
+                        headers: {
+                            "auth-token": token
+                        }
+                    })
+                ]);
+
+                if (!bookRes.ok) throw new Error('Failed to fetch book data');
+                if (!userRes.ok) throw new Error('Failed to fetch user data');
+
+                const bookData = await bookRes.json();
+                const userData = await userRes.json();
+
+                setBookData(bookData.book);
+                setActiveUser(userData);
             } catch (error) {
-                toast.error('Error fetching book data.');
+                toast.error(error.message || 'Error fetching data.');
             } finally {
                 setIsLoading(false);
             }
         };
-        fetchBookData();
+
+        fetchData();
     }, [bookId]);
+
 
     const toggleEdit = () => navigate(`/update/${bookId}`);
 
@@ -46,6 +67,7 @@ const BookDetails = () => {
             toast.warning('No PDF available for this book.');
         }
     };
+
 
 
     const handleDelete = async () => {
@@ -195,6 +217,7 @@ const BookDetails = () => {
                         {/* Action Buttons */}
                         <div className="flex flex-wrap gap-3">
                             <motion.button
+                                disabled={!activeUser.isVerified}
                                 onClick={toggleEdit}
                                 className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-xl shadow-lg shadow-blue-600/25 hover:shadow-xl hover:shadow-blue-600/30 transition-all duration-300"
                                 whileHover={{ scale: 1.02 }}
@@ -206,6 +229,7 @@ const BookDetails = () => {
 
                             {["ebook", "both"].includes(bookData?.bookType?.toLowerCase()) && (
                                 <motion.button
+                                    disabled={!activeUser.isVerified}
                                     onClick={handleViewPDF}
                                     className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 text-white font-semibold rounded-xl shadow-lg shadow-emerald-600/25 hover:shadow-xl hover:shadow-emerald-600/30 transition-all duration-300"
                                     whileHover={{ scale: 1.02 }}
@@ -217,6 +241,7 @@ const BookDetails = () => {
                             )}
 
                             <motion.button
+                                disabled={!activeUser.isVerified}
                                 onClick={() => setShowDeleteModal(true)}
                                 className="group flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold rounded-xl shadow-lg shadow-red-500/25 hover:shadow-xl hover:shadow-red-500/30 transition-all duration-300"
                                 whileHover={{ scale: 1.02 }}
