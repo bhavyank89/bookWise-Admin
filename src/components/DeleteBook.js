@@ -1,24 +1,37 @@
-import React from 'react'
+import React, { useState } from 'react';
+import toast from 'react-hot-toast';
+import { Loader2 } from 'lucide-react';
 
 function DeleteBook({ setBookToDelete, setShowModal, bookToDelete, setBooks }) {
+    const [loading, setLoading] = useState(false);
+
     const confirmDeleteBook = async () => {
+        setLoading(true);
         try {
             const response = await fetch(`http://localhost:4000/book/delete/${bookToDelete._id}`, {
                 method: "DELETE",
                 headers: { "Content-Type": "application/json" },
             });
-            if (!response.ok) throw new Error("Delete failed");
+
             const result = await response.json();
-            setBooks((prev) => prev.filter((b) => b._id !== bookToDelete._id));
+
+            if (!response.ok || !result.success) {
+                toast.error(result.error || "Delete failed");
+                throw new Error(result.error || "Delete failed");
+            }
+
+            setBooks(prev => prev.filter(b => b._id !== bookToDelete._id));
             toast.success(result.message || "Book deleted!");
         } catch (err) {
             toast.error("Delete failed!");
             console.error(err);
         } finally {
+            setLoading(false);
             setShowModal(false);
             setBookToDelete(null);
         }
     };
+
     return (
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4"
@@ -40,20 +53,25 @@ function DeleteBook({ setBookToDelete, setShowModal, bookToDelete, setBooks }) {
                             setShowModal(false);
                             setBookToDelete(null);
                         }}
+                        disabled={loading}
                         className="px-3 sm:px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition text-sm"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={confirmDeleteBook}
-                        className="px-3 sm:px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition text-sm"
+                        disabled={loading}
+                        className={`px-3 sm:px-4 py-2 rounded text-sm transition flex items-center gap-2 
+                            ${loading ? 'bg-red-400 cursor-not-allowed' : 'bg-red-600 hover:bg-red-700 text-white'}
+                        `}
                     >
-                        Delete
+                        {loading && <Loader2 className="animate-spin w-4 h-4" />}
+                        {loading ? "Deleting..." : "Delete"}
                     </button>
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export default DeleteBook
+export default DeleteBook;

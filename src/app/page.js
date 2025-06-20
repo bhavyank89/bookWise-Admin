@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from "r
 import { AnimatePresence, motion } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import "./custom-cursor.css";
-
+import { Toaster } from 'react-hot-toast';
 import Loader from "@/components/Loader";
 import BorrowRequests from "@/components/BorrowRequest";
 import AccountRequests from "@/components/AccountRequest";
@@ -448,6 +448,17 @@ export default function Home() {
   return (
     <Tooltip.Provider>
       <Router>
+        <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 3000,
+          style: {
+            background: '#333',
+            color: '#fff',
+          },
+        }}
+      />
         <MainApp />
       </Router>
     </Tooltip.Provider>
