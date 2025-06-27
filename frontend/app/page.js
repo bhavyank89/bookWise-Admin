@@ -5,22 +5,22 @@ import { AnimatePresence, motion } from "framer-motion";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import "./custom-cursor.css";
 import { Toaster } from 'react-hot-toast';
-import Loader from "@/components/Loader";
-import BorrowRequests from "@/components/BorrowRequest";
-import AccountRequests from "@/components/AccountRequest";
-import UpdateBook from "@/components/UpdateBook";
-import BookDetails from "@/components/BookDetails";
-import LoginPage from "@/components/Login";
-import Navbar from "@/components/Navbar";
-import AdminSignup from "@/components/SignUp";
+import Loader from "../src/components/Loader";
+import BorrowRequests from "../src/components/BorrowRequest";
+import AccountRequests from "../src/components/AccountRequest";
+import UpdateBook from "../src/components/UpdateBook";
+import BookDetails from "../src/components/BookDetails";
+import LoginPage from "../src/components/Login";
+import Navbar from "../src/components/Navbar";
+import AdminSignup from "../src/components/SignUp";
 import { AlignJustify } from "lucide-react";
-import BorrowHistory from "@/components/BorrowHistory";
+import BorrowHistory from "../src/components/BorrowHistory";
 import App from "./App";
 
-const Dashboard = lazy(() => import("@/components/Dashboard"));
-const AllUsers = lazy(() => import("@/components/AllUsers"));
-const AllBooks = lazy(() => import("@/components/AllBooks"));
-const CreateBook = lazy(() => import("@/components/CreateBook"));
+const Dashboard = lazy(() => import("../src/components/Dashboard"));
+const AllUsers = lazy(() => import("../src/components/AllUsers"));
+const AllBooks = lazy(() => import("../src/components/AllBooks"));
+const CreateBook = lazy(() => import("../src/components/CreateBook"));
 
 const AnimatedPage = ({ children }) => (
   <motion.div

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { motion, AnimatePresence } from "framer-motion";
-import { Skeleton } from "@/components/ui/Skeleton";
+import { Skeleton } from "./ui/Skeleton";
 import { Trash2, ChevronDown } from "lucide-react";
 import PaginationControls from "./Pagination";
 
