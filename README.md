@@ -6,15 +6,15 @@
 
 ## 🚀 Live Demo
 
-* **Admin Panel**: [bookwise-admin.vercel.app](https://bookwise-admin.vercel.app)
-* **Main Panel**: [bookwise-main.vercel.app](https://bookwise-main.vercel.app)
+* **Frontend (Admin Panel)**: [bookwise-admin.vercel.app](https://bookwise-admin.vercel.app)
+* **Frontend (Main Panel)**: [bookwise-main.vercel.app](https://bookwise-main.vercel.app)
 
 ---
 
 ## 🗃️ Github repo
 
-* **Frontend (Admin Panel)**: [github.com/bhavyank89/bookWise-Admin](https://github.com/bhavyank89/bookWise-Admin)
-* **Frontend (Main Panel)**: [github.com/bhavyank89/bookWise](https://github.com/bhavyank89/bookWise)
+* **Admin Panel**: [github.com/bhavyank89/bookWise-Admin](https://github.com/bhavyank89/bookWise-Admin)
+* **Main Panel**: [github.com/bhavyank89/bookWise](https://github.com/bhavyank89/bookWise)
 
 ---
 
