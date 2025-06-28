@@ -1,0 +1,99 @@
+/* Hide default browser cursor globally */
+* {
+  cursor: none !important;
+}
+
+/* Custom cursor styles - removed conflicting root styles */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  background: #000;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor--init {
+  opacity: 1;
+}
+
+.custom-cursor--hover {
+  transform: translate(-50%, -50%) scale(1.5);
+  background: #646cff;
+}
+
+.custom-cursor--disabled {
+  transform: translate(-50%, -50%) scale(0.8);
+  background: #ccc;
+  opacity: 0.5;
+}
+
+/* Alternative approach - hide cursor on specific elements if global doesn't work */
+body,
+button,
+a,
+input,
+textarea,
+select {
+  cursor: none !important;
+}
+
+/* For better performance, you can also add this to specific interactive elements */
+.cursor-none {
+  cursor: none !important;
+}
+
+/* Logo animations - kept for compatibility */
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Additional utility classes for better responsiveness */
+.full-height {
+  height: 100vh;
+}
+
+.full-width {
+  width: 100vw;
+}

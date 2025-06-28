@@ -1,0 +1,17 @@
+{
+    "version": 2,
+    "public": true,
+    "buildCommand": "npm run build",
+    "outputDirectory": "dist",
+    "rewrites": [
+        {
+            "source": "/(.*)",
+            "destination": "/index.html"
+        }
+    ],
+    "env": {
+        "VITE_ADMIN_URL": "http://localhost:3001",
+        "VITE_SERVER_URL": "https://bookwise-backend.up.railway.app",
+        "VITE_MAIN_URL": "https://bookwise-main.vercel.app"
+    }
+}
