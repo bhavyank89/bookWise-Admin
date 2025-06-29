@@ -70,8 +70,8 @@ export default function AccountRequests({ activeUser }) {
     const handleAction = async (actionType, id) => {
         const url =
             actionType === "verify"
-                ? `${SERVER_URL}/verify`
-                : `${SERVER_URL}/deverify`;
+                ? `${SERVER_URL}/user/verify`
+                : `${SERVER_URL}/user/deverify`;
 
         try {
             const response = await fetch(url, {
